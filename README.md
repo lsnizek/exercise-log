@@ -1,2 +1,1 @@
-# exercise-log
-Exercise Log
+# Exercise Log
