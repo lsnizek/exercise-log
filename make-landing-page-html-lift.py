@@ -16,7 +16,24 @@ for fn in sys.argv[2:]:
 order = ['squat', 'press', 'bench', 'pull-up', 'deadlift', 'power clean']
 year = datetime.datetime.now().year
 
-print('<html><head><title>%s</title></head><body>' % sys.argv[1])
+print('<html><head><title>%s</title>' % sys.argv[1])
+print('''<style> /* Top-Right-Bottom-Left */
+  HTML             { font-family: Helvetica; padding: 20pt 0pt 0pt 20pt; }
+  TD               { font-size: 7pt; padding-top: 4pt; padding-bottom: 4pt; }
+  TD A             { color: white; }
+  TABLE            { border-collapse: collapse; }
+  H1               { font-size: 10pt; margin-bottom: 12pt; }
+  .label           { font-weight: bold; text-transform: capitalize; text-align: center; }
+  .col1, .col2     { background: black; color: white; }
+  .col1            { width: 16pt; padding-right: 7pt; text-align: right; }
+  .col2            { width: 16pt; }
+  .col3            { width: 12pt; text-align: center; background: #EBEBEB; }
+  .col4            { width: 36pt; text-align: right; padding-right: 4pt; }
+  #ex0             { background: #DBDBDB; }
+  #ex1, #ex2, #ex3 { background: #C9C9C9; }
+  #ex4, #ex5       { background: #B8B8B8; }
+</style>''')
+print('</head><body>')
 
 # iterate through date-sorted lift sessions for given year
 # list exercises in order given above
@@ -28,25 +45,26 @@ for s in sessions:
     if block != month:
         if block:
             print('</tbody></table>')
-        print('<h3>%s</h3>' % month)
-        print('<table><thead><tr>')
-        print('<td width="5%">')
-        print('<td width="5%">')
-        print('<td width="5%">')
-        width = 85 / len(order) - 1
-        print(''.join(('<td width="%d%%%%">%%s</td>' % width) % \
-            name for name in order))
-        print('</tr></thead><tbody>')
+        print(
+            '<h1>%s</h1>' % month,
+            '<table><thead><tr><td colspan="3"/>',
+            ''.join(('<td class="label">%s</td>') % name for name in order),
+            '</tr></thead><tbody>'
+        )
         block = month
     day = s['start']['date'].strftime('%-d')
     dayofweek = s['start']['date'].strftime('%a')[0:2]
     url = '%s.html' % s['filename'].replace('.yaml', '')
-    print('<tr><td><a href="%s">%s</a></td><td>%s</td><td>%s</td>' % \
-        (url, day, dayofweek, s['kind']))
-    for name in order:
+    print(
+        '<tr><td class="col1"><a href="%s">%s</a></td>' % (url, day),
+        '<td class="col2"><a href="%s">%s</a></td>' % (url, dayofweek),
+        '<td class="col3">%s</td>' % s['kind']
+    )
+    for exn in range(len(order)):
         ex = next((ex for ex in s['work']['weights'] \
-            if name == ex['exercise']), None)
-        print('<td>%s</td>' % (ex['load'] if ex else ''), end='')
+            if order[exn] == ex['exercise']), None)
+        print('<td class="col4" id="ex%d">%s</td>' % \
+            (exn, ex['load'] if ex else ''), end='')
     print('</tr>')
 if block:
     print('</tbody></table>')
