@@ -37,7 +37,7 @@ print('''<style> /* Top-Right-Bottom-Left */
   .col3            { width: 38pt; padding-right: 7pt; text-align: right; }
   .col4            { width: 28pt; text-align: center; }
   .col5            { width: 70pt; padding-left: 4pt; color: white; }
-  .col6            { padding-left: 6pt; padding-right: 20pt; }
+  .col6            { padding-left: 4pt; padding-right: 20pt; }
   .col7            { width: 40pt; }
   .spacious        { background: #88FA4E; }
   .fly200          { background: #3F2859; }
@@ -55,6 +55,7 @@ print('''<style> /* Top-Right-Bottom-Left */
   .im100           { background: #5E5E5E; }
   .im200           { background: #4B4B4B; }
   .distance        { background: $929292; }
+  .other           { background: black; }
 </style>''')
 venue_dimensions = 'width="18" height="18"'
 print('</head><body>')
@@ -84,6 +85,12 @@ for s in sessions:
     url = '%s.html' % s['filename'].replace('.yaml', '')
     venue_short = unidecode.unidecode(s['venue']['name']).lower()
     venue_full = s['venue']['name'].encode('ascii', 'xmlcharrefreplace').decode()
+    if 'stroke' in workset and workset['stroke'] in ['fly', 'back', 'breast', 'free']:
+        stroke_color = workset['stroke'] + '200'
+        stroke_prefix = workset['stroke'] + ' '
+    else: # could support multi-stroke sessions, etc
+        stroke_color = 'other'
+        stroke_prefix = ''
     print(
         '<tr>',
         '<td class="col1"><a href="%s">%s</a></td>' % \
@@ -95,8 +102,8 @@ for s in sessions:
             time_ampm(datetime.datetime.strptime(s['start']['time'], '%H:%M %Z'))),
         '<td class="col4"><img %s src="%s" alt="%s" title="%s"/></td>' % \
             (venue_dimensions, '%s.png' % venue_short, venue_full, venue_full),
-        '<td class="col5 %s">%s %s</td>' % \
-            (workset['stroke'] + '200', workset['stroke'], s['kind']),
+        '<td class="col5 %s">%s%s</td>' % \
+            (stroke_color, stroke_prefix, s['kind']),
         '<td class="col6">%s</td>' % workset['summary'],
         '<td class="col7">%dm</td>' % s['volume'],
         '</tr>')

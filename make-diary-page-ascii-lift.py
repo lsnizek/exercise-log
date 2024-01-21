@@ -42,7 +42,7 @@ except KeyError:
     pass
 
 for ex in session['work']['weights']:
-    print('%dkg %s' % (ex['load'], ex['exercise']))
+    print('%.4gkg %s' % (ex['load'], ex['exercise']))
     print('===============================')
     print()
 

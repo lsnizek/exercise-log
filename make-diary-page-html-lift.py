@@ -36,7 +36,7 @@ for (i, j) in [('venue', 'note'), ('warmup', 'note')]:
         pass
 
 for ex in session['work']['weights']:
-    print('<h3>%dkg %s</h3>' % (ex['load'], ex['exercise']))
+    print('<h3>%.4gkg %s</h3>' % (ex['load'], ex['exercise']))
 
     print(capitalise(ex['preparation'].replace('\n', '<br/>')))
 

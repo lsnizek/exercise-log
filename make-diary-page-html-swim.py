@@ -28,18 +28,18 @@ def time_ampm(t):
 assert len(session['work']['swimming']) == 1 # only support single-set sessions
 workset = session['work']['swimming'][0]
 
-print('<p>%s, %s, %s, %s, %dm</p>' % (\
+print('<p>%s, %s, %s%s, %dm</p>' % (\
     time_ampm(datetime.datetime.strptime(session['start']['time'], '%H:%M %Z')),
     session['venue']['name'].encode('ascii', 'xmlcharrefreplace').decode(),
-    workset['stroke'],
+    '' if 'stroke' not in workset else workset['stroke'] + ', ',
     session['kind'],
     session['volume']))
 
 print('<h3>%s</h3>' % workset['summary'])
 
-for (i, j) in [('venue', 'note'), ('warmup', 'note')]:
+for (i, j, k) in [('venue', 'note', ''), ('warmup', 'note', 'Warm-up: ')]:
     try:
-        print('<p>%s</p>' % capitalise(session[i][j]))
+        print('<p>%s%s</p>' % (k, capitalise(session[i][j])))
     except KeyError:
         pass
 
@@ -47,7 +47,7 @@ print(capitalise(session['work']['preparation'].replace('\n', '<br/>')))
 
 for section in ['note', 'structure', 'times']:
     try:
-        print('<p>%s</p>' % capitalise(workset[section]))
+        print('<p>%s</p>' % capitalise(workset[section]).replace('\n', '<br/>'))
         print()
     except KeyError:
         pass
