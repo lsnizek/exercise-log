@@ -25,6 +25,7 @@ def time_ampm(t):
 
 print('<html><head><title>%s</title>' % sys.argv[1])
 print('''<style> /* Top-Right-Bottom-Left */
+  TD.link:hover    { cursor: pointer; }
   HTML             { font-family: Helvetica; padding: 20pt 0pt 0pt 20pt; }
   TD               { font-size: 7pt; }
   TD A             { color: white; }
@@ -93,17 +94,18 @@ for s in sessions:
         stroke_prefix = ''
     print(
         '<tr>',
-        '<td class="col1"><a href="%s">%s</a></td>' % \
-            (url, s['start']['date'].strftime('%-d')),
-        '<td class="col2"><a href="%s">%s</a></td>' % \
-            (url, s['start']['date'].strftime('%a')[0:2]),
+        '<td class="col1">%s</td>' % \
+            (s['start']['date'].strftime('%-d')),
+        '<td class="col2">%s</td>' % \
+            (s['start']['date'].strftime('%a')[0:2]),
         '<td class="col3%s">%s</td>' % \
             (' spacious' if spacious else '',
             time_ampm(datetime.datetime.strptime(s['start']['time'], '%H:%M %Z'))),
         '<td class="col4"><img %s src="%s" alt="%s" title="%s"/></td>' % \
             (venue_dimensions, '%s.png' % venue_short, venue_full, venue_full),
-        '<td class="col5 %s">%s%s</td>' % \
-            (stroke_color, stroke_prefix, s['kind']),
+        '<td onclick="window.location=\'%s\';" class="col5 link %s">' \
+            '<a href="%s">%s%s</a></td>' % \
+            (url, stroke_color, url, stroke_prefix, s['kind']),
         '<td class="col6">%s</td>' % workset['summary'],
         '<td class="col7">%dm</td>' % s['volume'],
         '</tr>')
