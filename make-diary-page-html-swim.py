@@ -52,6 +52,12 @@ for section in ['note', 'structure', 'times']:
     except KeyError:
         pass
 
+i, j, k = 'cooldown', 'note', 'Cool-down: '
+try:
+    print('<p>%s%s</p>' % (k, capitalise(session[i][j])))
+except KeyError:
+    pass
+
 try:
     print('<p>%s</p>' % capitalise(session['next']))
     print()

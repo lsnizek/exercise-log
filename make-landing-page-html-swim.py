@@ -30,7 +30,7 @@ print('''<style> /* Top-Right-Bottom-Left */
   TD               { font-size: 7pt; }
   TD A             { color: white; }
   TABLE            { border-collapse: collapse; }
-  H1               { font-size: 10pt; margin-bottom: 20pt; }
+  H1               { font-size: 10pt; margin-top: 16pt; margin-bottom: 10pt; }
   .label           { font-weight: bold; text-transform: capitalize; text-align: center; }
   .col1, .col2     { background: black; color: white; }
   .col1            { width: 16pt; padding-right: 7pt; text-align: right; }
@@ -38,7 +38,7 @@ print('''<style> /* Top-Right-Bottom-Left */
   .col3            { width: 38pt; padding-right: 7pt; text-align: right; }
   .col4            { width: 28pt; text-align: center; }
   .col5            { width: 70pt; padding-left: 4pt; color: white; }
-  .col6            { padding-left: 4pt; padding-right: 20pt; }
+  .col6            { width: 200pt; padding-left: 4pt; padding-right: 20pt; }
   .col7            { width: 40pt; }
   .spacious        { background: #88FA4E; }
   .fly200          { background: #3F2859; }
@@ -86,12 +86,15 @@ for s in sessions:
     url = '%s.html' % s['filename'].replace('.yaml', '')
     venue_short = unidecode.unidecode(s['venue']['name']).lower()
     venue_full = s['venue']['name'].encode('ascii', 'xmlcharrefreplace').decode()
-    if 'stroke' in workset and workset['stroke'] in ['fly', 'back', 'breast', 'free']:
-        stroke_color = workset['stroke'] + '200'
-        stroke_prefix = workset['stroke'] + ' '
-    else: # could support multi-stroke sessions, etc
-        stroke_color = 'other'
-        stroke_prefix = ''
+    stroke_color = 'other' # could support multi-stroke sessions, etc
+    stroke_prefix = ''
+    if 'stroke' in workset:
+        if workset['stroke'] in ['fly', 'back', 'breast', 'free']:
+            stroke_color = workset['stroke'] + '200'
+            stroke_prefix = workset['stroke'] + ' '
+        elif workset['stroke'] == 'IM':
+            stroke_color = 'im200'
+            stroke_prefix = 'IM '
     print(
         '<tr>',
         '<td class="col1">%s</td>' % \

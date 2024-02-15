@@ -22,7 +22,7 @@ print('''<style> /* Top-Right-Bottom-Left */
   TD               { font-size: 7pt; padding-top: 4pt; padding-bottom: 4pt; }
   TD A             { color: white; }
   TABLE            { border-collapse: collapse; }
-  H1               { font-size: 10pt; margin-bottom: 12pt; }
+  H1               { font-size: 10pt; margin-top: 20pt; margin-bottom: 10pt; }
   .label           { font-weight: bold; text-transform: capitalize; text-align: center; }
   .col1, .col2     { background: black; color: white; }
   .col1            { width: 16pt; padding-right: 7pt; text-align: right; }
