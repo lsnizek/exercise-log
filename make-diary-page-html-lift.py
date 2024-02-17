@@ -40,11 +40,15 @@ for (i, j) in [('venue', 'note'), ('warmup', 'note')]:
 for ex in session['work']['weights']:
     print('<h3>%.4gkg %s</h3>' % (ex['load'], ex['exercise']))
 
-    print(capitalise(ex['preparation'].replace('\n', '<br/>')))
-
-    for section in ['note', 'video']:
+    for section in ['preparation', 'note', 'video']:
         try:
-            print('<p>%s</p>' % capitalise(ex[section]))
+            if type(ex[section]) == list:
+                print('<ul>')
+                for bullet in ex[section]:
+                    print('<li>%s</li>' % bullet)
+                print('</ul>')
+            else:
+                print('<p>%s</p>' % capitalise(ex[section]))
         except KeyError:
             pass
 

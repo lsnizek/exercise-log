@@ -45,14 +45,26 @@ for (i, j, k) in [('venue', 'note', ''), ('warmup', 'note', 'Warm-up: ')]:
     except KeyError:
         pass
 
-print(capitalise(session['work']['preparation'].replace('\n', '<br/>')))
+if type(session['work']['preparation']) == list:
+    print('<ul>')
+    for bullet in session['work']['preparation']:
+        print('<li>%s</li>' % bullet)
+    print('</ul>')
+else:
+    print('<p>%s</p>' % capitalise(session['work']['preparation']))
 
 for section in ['note', 'structure', 'times']:
     try:
-        print('<p>%s</p>' % capitalise(workset[section]).replace('\n', '<br/>'))
-        print()
+        if type(workset[section]) == list:
+            print('<ul>')
+            for bullet in workset[section]:
+                print('<li>%s</li>' % bullet)
+            print('</ul>')
+        else:
+            print('<p>%s</p>' % capitalise(workset[section]))
     except KeyError:
-        pass
+        if section == 'times':
+            raise KeyError
 
 i, j, k = 'cooldown', 'note', 'Cool-down: '
 try:
