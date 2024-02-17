@@ -64,4 +64,7 @@ try:
 except KeyError:
     pass
 
+if 'picture' in session:
+    print('<p><img width="480" src="%s"/></p>' % session['picture'])
+
 print('</body></html>')

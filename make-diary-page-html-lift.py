@@ -46,4 +46,7 @@ for ex in session['work']['weights']:
         except KeyError:
             pass
 
+    if 'thumbnail' in ex:
+        print('<p><img width="200" src="%s"/></p>' % ex['thumbnail'])
+
 print('</body></html>')
