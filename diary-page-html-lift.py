@@ -15,8 +15,9 @@ def capitalise(s):
     return s[0].upper() + s[1:]
 
 shortdate = session['start']['date'].strftime('%b %-d')
-print('<html><meta charset="utf-8">')
-print('<head><title>%s</title></head><body>' % shortdate)
+print('<html><head><meta charset="utf-8">')
+print('<link rel="icon" type="image/x-icon" href="favicon.ico">')
+print('<title>%s</title></head><body>' % shortdate)
 print('<h2>%s</h2>' % shortdate)
 
 def time_ampm(t):

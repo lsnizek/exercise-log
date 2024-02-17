@@ -17,6 +17,7 @@ order = ['squat', 'press', 'bench', 'pull-up', 'deadlift', 'power clean']
 year = datetime.datetime.now().year
 
 print('<html><head><title>%s</title>' % sys.argv[1])
+print('<link rel="icon" type="image/x-icon" href="favicon.ico">')
 print('''<style> /* Top-Right-Bottom-Left */
   HTML             { font-family: Helvetica; padding: 20pt 0pt 0pt 20pt; }
   TD               { font-size: 7pt; padding-top: 4pt; padding-bottom: 4pt; }

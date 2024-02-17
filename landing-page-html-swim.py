@@ -24,6 +24,7 @@ def time_ampm(t):
     return '%s%s%s' % (t.strftime('%-I'), minutes, t.strftime('%p').lower())
 
 print('<html><head><title>%s</title>' % sys.argv[1])
+print('<link rel="icon" type="image/x-icon" href="favicon.ico">')
 print('''<style> /* Top-Right-Bottom-Left */
   TD.link:hover    { cursor: pointer; }
   HTML             { font-family: Helvetica; padding: 20pt 0pt 0pt 20pt; }
