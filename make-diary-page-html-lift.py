@@ -15,7 +15,8 @@ def capitalise(s):
     return s[0].upper() + s[1:]
 
 shortdate = session['start']['date'].strftime('%b %-d')
-print('<html><head><title>%s</title></head><body>' % shortdate)
+print('<html><meta charset="utf-8">')
+print('<head><title>%s</title></head><body>' % shortdate)
 print('<h2>%s</h2>' % shortdate)
 
 def time_ampm(t):
@@ -25,9 +26,10 @@ def time_ampm(t):
         minutes = ''
     return '%s%s%s' % (t.strftime('%-I'), minutes, t.strftime('%p').lower())
 
+# explicit encoding: encode('ascii', 'xmlcharrefreplace').decode()
 print('<p>%s, %s</p>' % (\
     time_ampm(datetime.datetime.strptime(session['start']['time'], '%H:%M %Z')),
-    session['venue']['name'].encode('ascii', 'xmlcharrefreplace').decode()))
+    session['venue']['name']))
 
 for (i, j) in [('venue', 'note'), ('warmup', 'note')]:
     try:
