@@ -42,7 +42,13 @@ print('<h3>%s</h3>' % workset['summary'])
 
 for (i, j, k) in [('venue', 'note', ''), ('warmup', 'note', 'Warm-up: ')]:
     try:
-        print('<p>%s%s</p>' % (k, capitalise(session[i][j])))
+        if type(session[i][j]) == list:
+            print('%s<ul>' % k)
+            for bullet in session[i][j]:
+                print('<li>%s</li>' % bullet)
+            print('</ul>')
+        else:
+            print('<p>%s%s</p>' % (k, capitalise(session[i][j])))
     except KeyError:
         pass
 
