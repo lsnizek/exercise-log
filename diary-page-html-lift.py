@@ -17,7 +17,8 @@ session = all[0]
 def capitalise(s):
     return s[0].upper() + s[1:]
 
-shortdate = session['start']['date'].strftime('%b %-d')
+shortdate = datetime.datetime.strptime(session['start']['date'],
+    '%Y-%m-%d').strftime('%b %-d') # stick to string
 print('<html><head><meta charset="utf-8">')
 print('<link rel="icon" type="image/x-icon" href="favicon.ico">')
 print('<title>%s</title></head><body>' % shortdate)

@@ -64,13 +64,15 @@ print('</head><body>')
 
 # iterate through date-sorted lift sessions for given year
 sessions = sorted(filter(lambda s: s['type'] == 'swim' and
-    s['start']['date'].year == year, all), key=lambda s: s['start']['date'])
+    datetime.datetime.strptime(str(s['start']['date']), '%Y-%m-%d').year == year,
+    all), key=lambda s: str(s['start']['date']))
 block = None
 for s in sessions:
+    date = datetime.datetime.strptime(str(s['start']['date']), '%Y-%m-%d')
     assert len(s['work']['swimming']) == 1 # only support single-set sessions
     workset = s['work']['swimming'][0]
 
-    month = s['start']['date'].strftime('%B')
+    month = date.strftime('%B')
     if block != month:
         if block:
             print('</tbody></table>')
@@ -99,9 +101,9 @@ for s in sessions:
     print(
         '<tr>',
         '<td class="col1">%s</td>' % \
-            (s['start']['date'].strftime('%-d')),
+            (date.strftime('%-d')),
         '<td class="col2">%s</td>' % \
-            (s['start']['date'].strftime('%a')[0:2]),
+            (date.strftime('%a')[0:2]),
         '<td class="col3%s">%s</td>' % \
             (' spacious' if spacious else '',
             time_ampm(datetime.datetime.strptime(s['start']['time'], '%H:%M %Z'))),
