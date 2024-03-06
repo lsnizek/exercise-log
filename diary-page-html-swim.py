@@ -6,8 +6,11 @@ if len(sys.argv) != 2:
     print('usage: make-diary-page-html-swim.py YAMLFILE')
     sys.exit(2)
 
-with open(sys.argv[1]) as fh:
-    all = yaml.safe_load(fh)
+if sys.argv[1] == '-':
+    all = yaml.safe_load(sys.stdin)
+else:
+    with open(sys.argv[1]) as fh:
+        all = yaml.safe_load(fh)
 assert(len(all) == 1) # only support single-session files
 session = all[0]
 
@@ -80,7 +83,13 @@ except KeyError:
     pass
 
 try:
-    print('<p>%s</p>' % capitalise(session['next']))
+    if type(session['next']) == list:
+        print('<ul>')
+        for bullet in session['next']:
+            print('<li>%s</li>' % bullet)
+        print('</ul>')
+    else:
+        print('<p>%s</p>' % capitalise(session['next']))
     print()
 except KeyError:
     pass

@@ -6,8 +6,11 @@ if len(sys.argv) != 2:
     print('usage: make-diary-page-html-lift.py YAMLFILE')
     sys.exit(2)
 
-with open(sys.argv[1]) as fh:
-    all = yaml.safe_load(fh)
+if sys.argv[1] == '-':
+    all = yaml.safe_load(sys.stdin)
+else:
+    with open(sys.argv[1]) as fh:
+        all = yaml.safe_load(fh)
 assert(len(all) == 1) # only support single-session files
 session = all[0]
 
