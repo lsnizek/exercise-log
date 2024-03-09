@@ -3,7 +3,7 @@ import sys
 import yaml # pyyaml
 
 if len(sys.argv) != 2:
-    print('usage: make-diary-page-html-lift.py YAMLFILE')
+    print('usage: diary-page-html-lift.py YAMLFILE')
     sys.exit(2)
 
 if sys.argv[1] == '-':

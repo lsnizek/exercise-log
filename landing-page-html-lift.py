@@ -3,7 +3,7 @@ import sys
 import yaml # pyyaml
 
 if len(sys.argv) < 2:
-    print('usage: make-landing-page-html-lift.py TITLE YAMLFILE ...')
+    print('usage: landing-page-html-lift.py TITLE YAMLFILE ...')
     sys.exit(2)
 
 all = []

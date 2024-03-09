@@ -4,7 +4,7 @@ import yaml # pyyaml
 import unidecode
 
 if len(sys.argv) < 2:
-    print('usage: make-landing-page-html-swim.py TITLE YAMLFILE ...')
+    print('usage: landing-page-html-swim.py TITLE YAMLFILE ...')
     sys.exit(2)
 
 all = []

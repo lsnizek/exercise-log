@@ -3,7 +3,7 @@ import sys
 import yaml # pyyaml
 
 if len(sys.argv) < 2:
-    print('usage: make-summary-ascii-lift.py YAMLFILE ...')
+    print('usage: summary-ascii-lift.py YAMLFILE ...')
     sys.exit(2)
 
 all = []

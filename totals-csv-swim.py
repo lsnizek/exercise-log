@@ -4,7 +4,7 @@ import sys
 import yaml # pyyaml
 
 if len(sys.argv) < 2:
-    print('usage: make-totals-csv-swim.py YAMLFILE ...')
+    print('usage: totals-csv-swim.py YAMLFILE ...')
     sys.exit(2)
 
 all = []

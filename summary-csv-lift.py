@@ -4,7 +4,7 @@ import sys
 import yaml # pyyaml
 
 if len(sys.argv) < 2:
-    print('usage: make-summary-csv-lift.py YAMLFILE ...')
+    print('usage: summary-csv-lift.py YAMLFILE ...')
     sys.exit(2)
 
 all = []

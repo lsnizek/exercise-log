@@ -3,7 +3,7 @@ import sys
 import yaml # pyyaml
 
 if len(sys.argv) != 2:
-    print('usage: make-diary-page-ascii-swim.py YAMLFILE')
+    print('usage: diary-page-ascii-swim.py YAMLFILE')
     sys.exit(2)
 
 if sys.argv[1] == '-':
