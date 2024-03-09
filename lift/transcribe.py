@@ -8,7 +8,7 @@ def insert(el, tag):
     return xml.etree.ElementTree.SubElement(el, tag)
 
 if len(sys.argv) != 3:
-    print('usage: opml-to-xml OPMLFILE YYYYMMDD')
+    print('usage: %s OPMLFILE YYYYMMDD' % sys.argv[0])
     sys.exit(2)
 
 if sys.argv[1] == '-':
