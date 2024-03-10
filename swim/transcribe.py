@@ -4,7 +4,7 @@ import packaging.version
 import sys
 import xml.etree.ElementTree
 
-def insert(el, tag):
+def insert_el(el, tag):
     return xml.etree.ElementTree.SubElement(el, tag)
 
 if len(sys.argv) != 3:
@@ -23,9 +23,9 @@ date = datetime.datetime.strptime(sys.argv[2], '%Y%m%d')
 # run some basic OPML checks as per OPML 2.0 specification plus require TITLE
 assert root.tag == 'opml'
 assert packaging.version.parse(root.attrib['version']).major == 2
-assert root.find('head') != None
+assert root.find('head')
 assert root.find('head').find('title') != None
-assert root.find('body') != None
+assert root.find('body')
 def check_outline_tags(x):
     for child in x:
         assert child.tag == 'outline'
@@ -35,6 +35,7 @@ check_outline_tags(root.find('body'))
 
 # use OPML TITLE for session type so it shows nice in Yuji Fujishiro's iOS app
 session_type = root.find('head').find('title').text
+assert session_type == 'swim'
 
 # gather outlines with labels at level 0 and lines at level 1
 outlines = {}
@@ -47,46 +48,56 @@ for child in root.find('body'):
         lines.append(grandchild.attrib['text'])
     outlines[label] = lines
 
+mandatory = [
+    'time',
+    'kind',
+    'venue',
+    'warm-up',
+    'preparation',
+    'summary',
+    'times',
+    'next'
+]
+simple = ['time', 'kind', 'volume', 'stroke', 'summary']
+
 # prepare output XML tree
-session_types = {'swim': 'swimming', 'lift': 'weights'}
-assert session_type in session_types
-for simple in ['time', 'kind', 'volume', 'stroke', 'summary']:
-    if simple in outlines:
-        assert len(outlines[simple]) == 1
+for label in simple:
+    if label in outlines:
+        assert len(outlines[label]) == 1
     else:
-        assert len(outlines[simple]) >= 1
-for mandatory in ['time', 'kind', 'venue', 'warm-up']:
-    assert mandatory in outlines
-if session_type == 'swim':
-    for mandatory in ['preparation', 'summary', 'times', 'next']:
-        assert mandatory in outlines
+        assert len(outlines[label]) >= 1
+for label in mandatory:
+    if label not in outlines:
+        raise NameError('missing "%s"' % label)
 b = xml.etree.ElementTree.TreeBuilder()
 b.start('session', {})
-meta = b.start('meta', {'type': session_type})
+meta = b.start('meta', {'type': 'swim'})
 b.end('meta')
 venue = b.start('venue', {})
 b.end('venue')
 warmup = b.start('warmup', {})
 b.end('warmup')
 work = b.start('work', {})
-sets = b.start(session_types[session_type], {})
-b.end(session_types[session_type])
+sets = b.start('swimming', {})
+b.end('swimming')
 b.end('work')
 b.end('session')
 
 # process outline into the output tree
-def insert_one_or_more_notes(el, notes):
+def insert_notes(el, notes):
     if len(notes) == 1:
         el.text = notes[0]
     elif len(notes) > 1:
         for note in notes:
-            insert(el, 'note').text = note
+            if len(note) == 0:
+                print('warning: empty note in "%s"' % el.tag, file=sys.stderr)
+            insert_el(el, 'note').text = note
 def add_or_get_swim_set(sets):
     s = sets.find('set')
-    if s != None:
+    if s:
         return s
     else:
-        return insert(sets, 'set')
+        return insert_el(sets, 'set')
 for label, lines in outlines.items():
     if label == 'time':
         time = dateutil.parser.parse(lines[0] + ' CEST')
@@ -94,39 +105,32 @@ for label, lines in outlines.items():
     elif label == 'kind':
         meta.set('kind', lines[0])
     elif label == 'volume':
-        meta.set('volume', str(int(lines[0])))
+        meta.set('volume', str(int(lines[0].rstrip('m'))))
     elif label == 'venue':
         venue.set('name', lines[0])
-        insert_one_or_more_notes(venue, lines[1:])
+        insert_notes(venue, lines[1:])
         for note in lines[1:]:
             if note.find('spacious') >= 0:
-                venue.set('spacious', True)
+                venue.set('spacious', "yes")
     elif label == 'warm-up':
-        insert_one_or_more_notes(warmup, lines)
+        insert_notes(warmup, lines)
     elif label == 'preparation':
-        assert session_type == 'swim'
-        preparation = insert(add_or_get_swim_set(sets), 'preparation')
-        insert_one_or_more_notes(preparation, lines)
+        preparation = insert_el(add_or_get_swim_set(sets), 'preparation')
+        insert_notes(preparation, lines)
     elif label == 'stroke':
-        assert session_type == 'swim'
         add_or_get_swim_set(sets).set('stroke', lines[0])
     elif label == 'summary':
-        assert session_type == 'swim'
-        insert(add_or_get_swim_set(sets), 'summary').text = lines[0]
+        insert_el(add_or_get_swim_set(sets), 'summary').text = lines[0]
     elif label == 'structure':
-        assert session_type == 'swim'
-        insert_one_or_more_notes(insert(add_or_get_swim_set(sets),
-            'structure'), lines)
+        insert_notes(insert_el(add_or_get_swim_set(sets), 'structure'), lines)
     elif label == 'comments':
-        insert_one_or_more_notes(insert(add_or_get_swim_set(sets),
-            'comments'), lines)
+        insert_notes(insert_el(add_or_get_swim_set(sets), 'comments'), lines)
     elif label == 'times':
-        insert_one_or_more_notes(insert(add_or_get_swim_set(sets),
-            'times'), lines)
+        insert_notes(insert_el(add_or_get_swim_set(sets), 'times'), lines)
     elif label == 'next':
-        assert session_type == 'swim'
-        insert_one_or_more_notes(insert(add_or_get_swim_set(sets),
-            'next'), lines)
+        insert_notes(insert_el(add_or_get_swim_set(sets), 'next'), lines)
+    elif label == 'video':
+        insert_notes(insert_el(add_or_get_swim_set(sets), 'video'), lines)
     else:
         raise NameError('unknown outline %s' % label)
 
