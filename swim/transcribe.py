@@ -23,9 +23,9 @@ date = datetime.datetime.strptime(sys.argv[2], '%Y%m%d')
 # run some basic OPML checks as per OPML 2.0 specification plus require TITLE
 assert root.tag == 'opml'
 assert packaging.version.parse(root.attrib['version']).major == 2
-assert root.find('head')
-assert root.find('head').find('title') != None
-assert root.find('body')
+assert not root.find('head') is None
+assert not root.find('head').find('title') is None
+assert not root.find('body') is None
 def check_outline_tags(x):
     for child in x:
         assert child.tag == 'outline'
@@ -94,7 +94,7 @@ def insert_notes(el, notes):
             insert_el(el, 'note').text = note
 def add_or_get_swim_set(sets):
     s = sets.find('set')
-    if s:
+    if not s is None:
         return s
     else:
         return insert_el(sets, 'set')
