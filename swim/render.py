@@ -166,9 +166,6 @@ def landing(files, title, url_generator):
 
     block = None
     for s in sessions:
-        assert len(s['sets']) == 1 # only support single-set sessions
-        workset = s['sets'][0]
-
         month = s['start'].strftime('%B')
         if block != month:
             if block:
@@ -186,13 +183,20 @@ def landing(files, title, url_generator):
         url = url_generator(s)
         venue_short = unidecode.unidecode(s['venue']['name']).lower()
         venue_full = s['venue']['name'].encode('ascii', 'xmlcharrefreplace').decode()
+        summary = []
+        strokes = []
+        for workset in s['sets']:
+            summary.append(workset['summary'])
+            if 'stroke' in workset:
+                strokes.append(workset['stroke'])
         stroke_color = 'other' # could support multi-stroke sessions, etc
         stroke_prefix = ''
-        if 'stroke' in workset:
-            if workset['stroke'] in ['fly', 'back', 'breast', 'free']:
-                stroke_color = workset['stroke'] + '200'
-                stroke_prefix = workset['stroke'] + ' '
-            elif workset['stroke'] == 'IM':
+        if len(list(set(strokes))) == 1:
+            stroke = list(set(strokes))[0]
+            if stroke in ['fly', 'back', 'breast', 'free']:
+                stroke_color = stroke + '200'
+                stroke_prefix = stroke + ' '
+            elif stroke == 'IM':
                 stroke_color = 'im200'
                 stroke_prefix = 'IM '
         print(
@@ -209,7 +213,7 @@ def landing(files, title, url_generator):
             '<td onclick="window.location=\'%s\';" class="col5 link %s">' \
                 '<a href="%s">%s%s</a></td>' % \
                 (url, stroke_color, url, stroke_prefix, s['kind']),
-            '<td class="col6">%s</td>' % workset['summary'],
+            '<td class="col6">%s</td>' % ', '.join(summary),
             '<td class="col7">%dm</td>' % s['volume'],
             '</tr>')
     if block:
@@ -230,18 +234,18 @@ def single(file, picture):
     print('<title>%s</title></head><body>' % shortdate)
     print('<h2>%s</h2>' % shortdate)
 
-    assert len(session['sets']) == 1 # only support single-set sessions
-    workset = session['sets'][0]
+    strokes = []
+    for workset in session['sets']:
+        if 'stroke' in workset:
+            strokes.append(workset['stroke'])
 
     # explicit encoding: encode('ascii', 'xmlcharrefreplace').decode()
     print('<p>%s, %s, %s%s, %dm</p>' % (\
         time_ampm(session['start']),
         session['venue']['name'],
-        '' if 'stroke' not in workset else workset['stroke'] + ', ',
+        '-'.join(strokes) + ', ' if len(strokes) > 0 else '',
         session['kind'],
         session['volume']))
-
-    print('<h3>%s</h3>' % workset['summary'])
 
     def p_or_ul(obj, prefix):
         if type(obj) == list:
@@ -254,14 +258,20 @@ def single(file, picture):
 
     if 'notes' in session['venue']:
         p_or_ul(session['venue']['notes'], '')
+
     p_or_ul(session['warmup'], 'Warm-up: ')
-    p_or_ul(workset['preparation'], '')
-    p_or_ul(workset['comments'], 'Comments: ')
-    p_or_ul(workset['structure'], 'Structure: ')
-    p_or_ul(workset['times'], 'Times: ')
-    if 'video' in workset:
-        p_or_ul(workset['video'], 'Video: ')
-    p_or_ul(workset['next'], 'Next: ')
+
+    for workset in session['sets']:
+        print('<h3>%s</h3>' % workset['summary'])
+
+        p_or_ul(workset['preparation'], '')
+        p_or_ul(workset['comments'], 'Comments: ')
+        if 'structure' in workset:
+            p_or_ul(workset['structure'], 'Structure: ')
+        p_or_ul(workset['times'], 'Times: ')
+        if 'video' in workset:
+            p_or_ul(workset['video'], 'Video: ')
+        p_or_ul(workset['next'], 'Next: ')
 
     if picture:
         print('<p><img width="480" src="%s"/></p>' % picture)
