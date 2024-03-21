@@ -265,7 +265,8 @@ def single(file, picture):
         print('<h3>%s</h3>' % workset['summary'])
 
         p_or_ul(workset['preparation'], '')
-        p_or_ul(workset['comments'], 'Comments: ')
+        if 'comments' in workset:
+            p_or_ul(workset['comments'], 'Comments: ')
         if 'structure' in workset:
             p_or_ul(workset['structure'], 'Structure: ')
         p_or_ul(workset['times'], 'Times: ')
