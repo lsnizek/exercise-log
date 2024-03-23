@@ -25,7 +25,7 @@ def capitalise(s):
 
 def parse_notes(el):
     if len(el) == 0:
-        return el.text
+        return el.text # can be None
     else:
         notes = []
         for note in el:
@@ -46,7 +46,10 @@ def parse_meta(el):
 
 def parse_venue(el):
     assert 'name' in el.attrib
-    venue = {'name': el.attrib['name'], 'notes': parse_notes(el)}
+    venue = {'name': el.attrib['name']}
+    notes = parse_notes(el)
+    if notes:
+        venue['notes'] = notes
     if 'spacious' in el.attrib:
         venue['spacious'] = bool(el.attrib['spacious'])
     return venue

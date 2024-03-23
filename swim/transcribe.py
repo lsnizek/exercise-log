@@ -63,9 +63,9 @@ simple = ['time', 'kind', 'volume', 'stroke', 'summary']
 # prepare output XML tree
 for label in simple:
     if label in outlines:
-        assert len(outlines[label]) == 1
-    else:
-        assert len(outlines[label]) >= 1
+        if len(outlines[label]) > 1:
+            raise NameError('simple outline %s has %d labels' % \
+                (label, len(outlines[label])))
 for label in mandatory:
     if label not in outlines:
         raise NameError('missing "%s"' % label)
