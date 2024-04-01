@@ -234,8 +234,8 @@ def single(file, picture):
     shortdate = session['start'].strftime('%b %-d')
     print('<html><head><meta charset="utf-8">')
     print('<link rel="icon" type="image/x-icon" href="favicon.ico">')
-    print('<title>%s</title></head><body>' % shortdate)
-    print('<h2>%s</h2>' % shortdate)
+    print('<title>%s</title></head><body><main>' % shortdate)
+    print('<header><h2>%s</h2>' % shortdate)
 
     strokes = []
     for workset in session['sets']:
@@ -243,7 +243,7 @@ def single(file, picture):
             strokes.append(workset['stroke'])
 
     # explicit encoding: encode('ascii', 'xmlcharrefreplace').decode()
-    print('<p>%s, %s, %s%s, %dm</p>' % (\
+    print('<p>%s, %s, %s%s, %dm</p></header>' % (\
         time_ampm(session['start']),
         session['venue']['name'],
         '-'.join(strokes) + ', ' if len(strokes) > 0 else '',
@@ -252,12 +252,12 @@ def single(file, picture):
 
     def p_or_ul(obj, prefix):
         if type(obj) == list:
-            print('%s<ul>' % prefix)
+            print('<section>%s<ul>' % prefix)
             for bullet in obj:
                 print('<li>%s</li>' % bullet)
-            print('</ul>')
+            print('</ul></section>')
         else:
-            print('<p>%s%s</p>' % (prefix, capitalise(obj)))
+            print('<section><p>%s%s</p></section>' % (prefix, capitalise(obj)))
 
     if 'notes' in session['venue']:
         p_or_ul(session['venue']['notes'], '')
@@ -280,7 +280,8 @@ def single(file, picture):
     if picture:
         print('<p><img width="480" src="%s"/></p>' % picture)
 
-    print('</body></html>')
+    # mobile Safari reader mode seems to require the 'main' semantic HTML tag
+    print('</main></body></html>')
 
 
 ##############################################################################
