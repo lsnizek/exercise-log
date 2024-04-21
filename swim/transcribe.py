@@ -56,7 +56,8 @@ mandatory = [
     'preparation',
     'summary',
     'times',
-    'next'
+    'next',
+    'volume'
 ]
 simple = ['time', 'kind', 'volume', 'stroke', 'summary']
 
