@@ -1,4 +1,5 @@
 import argparse
+import csv
 import datetime
 import os
 import sys
@@ -283,6 +284,25 @@ def single(file, picture):
     # mobile Safari reader mode seems to require the 'main' semantic HTML tag
     print('</main></body></html>')
 
+##############################################################################
+# --totals
+##############################################################################
+
+def totals(files):
+    sessions = []
+    for file in files:
+        sessions.append(parse(file))
+    year = datetime.datetime.now().year
+    sessions = sorted(filter(lambda s: s['start'].year == year,
+        sessions), key=lambda s: s['start'])
+    volume = {}
+    for s in sessions:
+        volume.setdefault(s['start'].month, [])
+        volume[s['start'].month].append(s['volume'])
+    writer = csv.writer(sys.stdout)
+    for month in volume:
+        writer.writerow([datetime.date(year, month, 1).strftime('%B %Y'),
+            sum(volume[month]), len(volume[month])])
 
 ##############################################################################
 # main
@@ -295,6 +315,8 @@ parser.add_argument('-p', '--picture',
     metavar='JPGFILE', help='Picture to reference from HTML')
 parser.add_argument('-l', '--landing', nargs='+',
     metavar='XMLFILE', help='HTML landing page (URLs from XML filenames)')
+parser.add_argument('-s', '--totals', nargs='+',
+    metavar='CSVFILE', help='Totals listing')
 parser.add_argument('-1', '--single',
     metavar='XMLFILE', help='HTML diary page')
 args = vars(parser.parse_args())
@@ -310,6 +332,8 @@ if args['landing']:
             file=sys.stderr)
     landing(args['landing'], args['title'],
         lambda s: '%s.html' % s['filename'].replace('.xml', ''))
+elif args['totals']:
+    totals(args['totals'])
 elif args['single']:
     single(args['single'], args['picture'])
 else:
