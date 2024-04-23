@@ -163,10 +163,9 @@ def landing(files, title, url_generator):
       .im200           { background: #4B4B4B; }
       .distance        { background: $929292; }
       .other           { background: black; }
-      .legacy          { font-size: 8pt; }
     </style>''')
     venue_dimensions = 'width="18" height="18"'
-    print('</head><body><a class="legacy" href="legacy.html">legacy</a><br/>')
+    print('</head><body>')
 
     block = None
     for s in sessions:
