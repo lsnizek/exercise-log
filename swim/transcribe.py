@@ -55,7 +55,6 @@ mandatory = [
     'warm-up',
     'preparation',
     'summary',
-    'times',
     'next',
     'volume'
 ]

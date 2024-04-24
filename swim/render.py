@@ -79,7 +79,7 @@ def parse_set(el):
             s['video'] = parse_notes(child)
         else:
             raise NameError('unknown tag "%s"' % child.tag)
-    mandatory = ['preparation', 'summary', 'times', 'next']
+    mandatory = ['preparation', 'summary', 'next']
     for tag in mandatory:
         assert tag in s
     return s
@@ -272,7 +272,8 @@ def single(file, picture):
             p_or_ul(workset['comments'], 'Comments: ')
         if 'structure' in workset:
             p_or_ul(workset['structure'], 'Structure: ')
-        p_or_ul(workset['times'], 'Times: ')
+        if 'times' in workset:
+            p_or_ul(workset['times'], 'Times: ')
         if 'video' in workset:
             p_or_ul(workset['video'], 'Video: ')
         p_or_ul(workset['next'], 'Next: ')
