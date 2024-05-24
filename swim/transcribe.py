@@ -4,9 +4,6 @@ import packaging.version
 import sys
 import xml.etree.ElementTree
 
-def insert_el(el, tag):
-    return xml.etree.ElementTree.SubElement(el, tag)
-
 if len(sys.argv) != 3:
     print('usage: %s OPMLFILE YYYYMMDD' % sys.argv[0])
     sys.exit(2)
@@ -84,6 +81,8 @@ b.end('work')
 b.end('session')
 
 # process outline into the output tree
+def insert_el(el, tag):
+    return xml.etree.ElementTree.SubElement(el, tag)
 def insert_notes(el, notes):
     if len(notes) == 1:
         el.text = notes[0]
@@ -92,7 +91,7 @@ def insert_notes(el, notes):
             if len(note) == 0:
                 print('warning: empty note in "%s"' % el.tag, file=sys.stderr)
             insert_el(el, 'note').text = note
-def add_or_get_swim_set(sets):
+def add_or_get_swimset(sets):
     s = sets.find('set')
     if not s is None:
         return s
@@ -115,22 +114,22 @@ for label, lines in outlines.items():
     elif label == 'warm-up':
         insert_notes(warmup, lines)
     elif label == 'preparation':
-        preparation = insert_el(add_or_get_swim_set(sets), 'preparation')
+        preparation = insert_el(add_or_get_swimset(sets), 'preparation')
         insert_notes(preparation, lines)
     elif label == 'stroke':
-        add_or_get_swim_set(sets).set('stroke', lines[0])
+        add_or_get_swimset(sets).set('stroke', lines[0])
     elif label == 'summary':
-        insert_el(add_or_get_swim_set(sets), 'summary').text = lines[0]
+        insert_el(add_or_get_swimset(sets), 'summary').text = lines[0]
     elif label == 'structure':
-        insert_notes(insert_el(add_or_get_swim_set(sets), 'structure'), lines)
+        insert_notes(insert_el(add_or_get_swimset(sets), 'structure'), lines)
     elif label == 'comments':
-        insert_notes(insert_el(add_or_get_swim_set(sets), 'comments'), lines)
+        insert_notes(insert_el(add_or_get_swimset(sets), 'comments'), lines)
     elif label == 'times':
-        insert_notes(insert_el(add_or_get_swim_set(sets), 'times'), lines)
+        insert_notes(insert_el(add_or_get_swimset(sets), 'times'), lines)
     elif label == 'next':
-        insert_notes(insert_el(add_or_get_swim_set(sets), 'next'), lines)
+        insert_notes(insert_el(add_or_get_swimset(sets), 'next'), lines)
     elif label == 'video':
-        insert_notes(insert_el(add_or_get_swim_set(sets), 'video'), lines)
+        insert_notes(insert_el(add_or_get_swimset(sets), 'video'), lines)
     else:
         raise NameError('unknown outline %s' % label)
 
