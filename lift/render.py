@@ -271,7 +271,9 @@ if args['landing']:
 elif args['summary']:
     summary(args['summary'])
 elif args['single']:
-    pictures = {kind: jpgfile for [jpgfile, kind] in args['picture']}
+    pictures = {}
+    if args['picture']:
+        pictures = {kind: jpgfile for [jpgfile, kind] in args['picture']}
     single(args['single'], pictures)
 else:
     print('must specify --landing, --summary or --single', file=sys.stderr)

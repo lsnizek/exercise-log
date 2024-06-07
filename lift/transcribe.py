@@ -120,9 +120,6 @@ for label, lines in outlines['other'].items():
     elif label == 'venue':
         venue.set('name', lines[0])
         insert_notes(venue, lines[1:])
-        for note in lines[1:]:
-            if note.find('spacious') >= 0:
-                venue.set('spacious', "yes")
     elif label == 'warm-up':
         insert_notes(warmup, lines)
     else:
