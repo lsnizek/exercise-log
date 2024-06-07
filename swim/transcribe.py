@@ -23,16 +23,13 @@ assert packaging.version.parse(root.attrib['version']).major == 2
 assert not root.find('head') is None
 assert not root.find('head').find('title') is None
 assert not root.find('body') is None
+title = root.find('head').find('title').text
 def check_outline_tags(x):
     for child in x:
         assert child.tag == 'outline'
         assert 'text' in child.attrib
         check_outline_tags(child)
 check_outline_tags(root.find('body'))
-
-# use OPML TITLE for session type so it shows nice in Yuji Fujishiro's iOS app
-session_type = root.find('head').find('title').text
-assert session_type == 'swim'
 
 # gather outlines with labels at level 0 and lines at level 1
 outlines = {}
@@ -48,7 +45,6 @@ for child in root.find('body'):
 mandatory = [
     'time',
     'kind',
-    'venue',
     'warm-up',
     'preparation',
     'summary',
@@ -97,6 +93,7 @@ def add_or_get_swimset(sets):
         return s
     else:
         return insert_el(sets, 'set')
+venue.set('name', title)
 for label, lines in outlines.items():
     if label == 'time':
         time = dateutil.parser.parse(lines[0] + ' CEST')
@@ -106,9 +103,8 @@ for label, lines in outlines.items():
     elif label == 'volume':
         meta.set('volume', str(int(lines[0].rstrip('m'))))
     elif label == 'venue':
-        venue.set('name', lines[0])
-        insert_notes(venue, lines[1:])
-        for note in lines[1:]:
+        insert_notes(venue, lines)
+        for note in lines:
             if note.find('spacious') >= 0:
                 venue.set('spacious', "yes")
     elif label == 'warm-up':

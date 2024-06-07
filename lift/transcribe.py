@@ -23,16 +23,13 @@ assert packaging.version.parse(root.attrib['version']).major == 2
 assert not root.find('head') is None
 assert not root.find('head').find('title') is None
 assert not root.find('body') is None
+title = root.find('head').find('title').text
 def check_outline_tags(x):
     for child in x:
         assert child.tag == 'outline'
         assert 'text' in child.attrib
         check_outline_tags(child)
 check_outline_tags(root.find('body'))
-
-# use OPML TITLE for session type so it shows nice in Yuji Fujishiro's iOS app
-session_type = root.find('head').find('title').text
-assert session_type == 'lift'
 
 other = ['time', 'venue', 'warm-up']
 
@@ -62,7 +59,7 @@ for child in root.find('body'):
 
 mandatory = {
     'lifts': ['weight', 'preparation', 'next'],
-    'other': ['time', 'venue']
+    'other': ['time']
 }
 simple = ['time', 'weight']
 
@@ -113,13 +110,13 @@ def add_or_get_lift(lifts, kind):
     l = insert_el(lifts, 'lift')
     l.set('kind', kind)
     return l
+venue.set('name', title)
 for label, lines in outlines['other'].items():
     if label == 'time':
         time = dateutil.parser.parse(lines[0] + ' CEST')
         meta.set('start', str(datetime.datetime.combine(date, time.time())))
     elif label == 'venue':
-        venue.set('name', lines[0])
-        insert_notes(venue, lines[1:])
+        insert_notes(venue, lines)
     elif label == 'warm-up':
         insert_notes(warmup, lines)
     else:
