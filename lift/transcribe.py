@@ -5,7 +5,7 @@ import sys
 import xml.etree.ElementTree
 
 if len(sys.argv) != 3:
-    print('usage: %s OPMLFILE YYYYMMDD' % sys.argv[0])
+    print('usage: %s OPMLFILE YYYYMMDD[-SUFFIX]' % sys.argv[0])
     sys.exit(2)
 
 if sys.argv[1] == '-':
@@ -15,7 +15,7 @@ else:
 root = tree.getroot()
 
 # date supplied on the side as OPML document has it in its file name
-date = datetime.datetime.strptime(sys.argv[2], '%Y%m%d')
+date = datetime.datetime.strptime(sys.argv[2].split('-')[0], '%Y%m%d')
 
 # run some basic OPML checks as per OPML 2.0 specification plus require TITLE
 assert root.tag == 'opml'
