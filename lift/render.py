@@ -85,7 +85,11 @@ def parse_work(el):
 
 def parse(file):
     session = {}
-    tree = xml.etree.ElementTree.parse(file)
+    try:
+        tree = xml.etree.ElementTree.parse(file)
+    except Exception as e:
+        print('in file:', file)
+        raise e
     root = tree.getroot()
     assert root.tag == 'session'
     for child in root:
