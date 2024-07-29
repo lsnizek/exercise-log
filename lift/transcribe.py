@@ -127,7 +127,7 @@ for kind in outlines:
     for label, lines in outlines[kind].items():
         if label == 'weight':
             add_or_get_lift(lifts, kind).set('weight',
-                str(int(lines[0].rstrip('kg'))))
+                str(float(lines[0].rstrip('kg'))))
         elif label == 'preparation':
             preparation = insert_el(add_or_get_lift(lifts, kind), 'preparation')
             insert_notes(preparation, lines)

@@ -56,7 +56,7 @@ def parse_warmup(el):
 def parse_lift(el):
     s = {}
     assert {'kind', 'weight'} <= set(el.attrib)
-    s['kind'], s['weight'] = el.attrib['kind'], int(el.attrib['weight'])
+    s['kind'], s['weight'] = el.attrib['kind'], float(el.attrib['weight'])
     for child in el:
         if child.tag == 'preparation':
             s['preparation'] = parse_notes(child)
