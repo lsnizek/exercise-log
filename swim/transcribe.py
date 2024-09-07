@@ -28,6 +28,8 @@ def check_outline_tags(x):
     for child in x:
         assert child.tag == 'outline'
         assert 'text' in child.attrib
+        if 'squat' in child.attrib['text']: # heuristic
+            raise NameError('\'squat\' outline found, probably a lift session')
         check_outline_tags(child)
 check_outline_tags(root.find('body'))
 

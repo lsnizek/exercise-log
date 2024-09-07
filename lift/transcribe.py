@@ -28,6 +28,8 @@ def check_outline_tags(x):
     for child in x:
         assert child.tag == 'outline'
         assert 'text' in child.attrib
+        if child.attrib['text'] == 'times': # heuristic
+            raise NameError('\'times\' outline found, probably a swim session')
         check_outline_tags(child)
 check_outline_tags(root.find('body'))
 
