@@ -138,6 +138,7 @@ def landing(files, title, url_generator):
       HTML             { font-family: Helvetica; padding: 20pt 0pt 0pt 20pt; }
       TD               { font-size: 7pt; }
       TD A             { color: white; }
+      P                { font-size: 9pt; }
       TABLE            { border-collapse: collapse; }
       H1               { font-size: 10pt; margin-top: 16pt; margin-bottom: 10pt; }
       .label           { font-weight: bold; text-transform: capitalize; text-align: center; }
@@ -225,6 +226,7 @@ def landing(files, title, url_generator):
     if block:
         print('</tbody></table>')
 
+    print('<p><a href="..">../</a></p>')
     print('</body></html>')
 
 ##############################################################################
