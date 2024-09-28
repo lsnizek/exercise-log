@@ -1,6 +1,7 @@
 import argparse
 import csv
 import datetime
+import html
 import os
 import sys
 import unidecode
@@ -245,9 +246,8 @@ def single(file, picture):
     strokes = []
     for s in session['sets']:
         if 'stroke' in s:
-            strokes.append(s['stroke'])
+            strokes.append(html.escape(s['stroke']))
 
-    # explicit encoding: encode('ascii', 'xmlcharrefreplace').decode()
     print('<p>%s, %s, %s%s, %dm</p></header>' % (\
         time_ampm(session['start']),
         session['venue']['name'],
