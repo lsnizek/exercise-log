@@ -215,7 +215,7 @@ def landing(files, title, url_generator):
             '<td class="col3%s">%s</td>' % \
                 (' spacious' if spacious else '',
                 time_ampm(s['start'])),
-            '<td class="col4"><img %s src="%s" alt="%s" title="%s"/></td>' % \
+            '<td class="col4"><img %s src="%s" alt="%s" title="%s"></td>' % \
                 (venue_dimensions, '%s.png' % venue_short, venue_full, venue_full),
             '<td onclick="window.location=\'%s\';" class="col5 link %s">' \
                 '<a href="%s">%s%s</a></td>' % \
@@ -284,7 +284,8 @@ def single(file, picture):
         p_or_ul(s['next'], 'Next: ')
 
     if picture:
-        print('<p><img width="480" src="%s"/></p>' % picture)
+        print('<section><p><img width="480" src="%s" alt="%s"></p><section>' % \
+            (picture, shortdate))
 
     # mobile Safari reader mode seems to require the 'main' semantic HTML tag
     print('</main></body></html>')

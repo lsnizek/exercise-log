@@ -219,7 +219,8 @@ def single(file, pictures):
         p_or_ul(l['next'], 'Next: ')
 
         if l['kind'] in pictures:
-            print('<p><img width="200" src="%s"/></p>' % pictures[l['kind']])
+            print('<section><p><img width="200" src="%s" alt="%s"></p></section>' % \
+                (pictures[l['kind']], shortdate))
 
     # mobile Safari reader mode seems to require the 'main' semantic HTML tag
     print('</main></body></html>')
