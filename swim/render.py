@@ -251,7 +251,7 @@ def single(file, picture):
     print('<p>%s, %s, %s%s, %dm</p></header>' % (\
         time_ampm(session['start']),
         session['venue']['name'],
-        '-'.join(strokes) + ', ' if len(strokes) > 0 else '',
+        ' & '.join(strokes) + ', ' if len(strokes) > 0 else '',
         session['kind'],
         session['volume']))
 
