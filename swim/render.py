@@ -322,7 +322,7 @@ parser.add_argument('-p', '--picture',
 parser.add_argument('-l', '--landing', nargs='+',
     metavar='XMLFILE', help='HTML landing page (HTML filenames from XML ones)')
 parser.add_argument('-s', '--totals', nargs='+',
-    metavar='CSVFILE', help='Totals listing')
+    metavar='XMLFILE', help='Totals listing')
 parser.add_argument('-1', '--single',
     metavar='XMLFILE', help='HTML diary page')
 args = vars(parser.parse_args())
