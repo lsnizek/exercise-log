@@ -83,6 +83,8 @@ def parse_set(el):
     mandatory = ['preparation', 'summary', 'next']
     for tag in mandatory:
         assert tag in s
+        assert not s[tag] is None
+        assert len(s[tag]) > 0
     return s
 
 def parse_work(el):
