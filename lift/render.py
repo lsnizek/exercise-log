@@ -117,9 +117,8 @@ def landing(files, title, url_generator):
     sessions = []
     for file in files:
         sessions.append(parse(file))
-    year = datetime.datetime.now().year
-    sessions = sorted(filter(lambda s: s['start'].year == year,
-        sessions), key=lambda s: s['start'])
+    sessions = sorted(sessions, key=lambda s: s['start'])
+    year = ''
 
     print('<html><head><title>%s</title>' % title)
     print('<link rel="icon" type="image/x-icon" href="favicon.ico">')
@@ -144,12 +143,14 @@ def landing(files, title, url_generator):
 
     block = None
     for s in sessions:
+        year_suffix = ' %d' % s['start'].year if year != s['start'].year else ''
         month = s['start'].strftime('%B')
+        year = s['start'].year
         if block != month:
             if block:
                 print('</tbody></table>')
             print(
-                '<h1>%s</h1>' % month,
+                '<h1>%s%s</h1>' % (month, year_suffix),
                 '<table><thead><tr><td colspan="2"/>',
                 ''.join(('<td class="label">%s</td>') % name for name in order),
                 '</tr></thead><tbody>'
@@ -233,9 +234,7 @@ def summary(files):
     sessions = []
     for file in files:
         sessions.append(parse(file))
-    year = datetime.datetime.now().year
-    sessions = sorted(filter(lambda s: s['start'].year == year,
-        sessions), key=lambda s: s['start'])
+    sessions = sorted(sessions, key=lambda s: s['start'])
     writer = csv.writer(sys.stdout)
     for s in sessions:
         for l in s['lifts']:

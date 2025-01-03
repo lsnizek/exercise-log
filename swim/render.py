@@ -130,9 +130,8 @@ def landing(files, title, url_generator):
     sessions = []
     for file in files:
         sessions.append(parse(file))
-    year = datetime.datetime.now().year
-    sessions = sorted(filter(lambda s: s['start'].year == year,
-        sessions), key=lambda s: s['start'])
+    sessions = sorted(sessions, key=lambda s: s['start'])
+    year = ''
 
     print('<html><head><title>%s</title>' % title)
     print('<link rel="icon" type="image/x-icon" href="favicon.ico">')
@@ -176,11 +175,13 @@ def landing(files, title, url_generator):
 
     block = None
     for s in sessions:
+        year_suffix = ' %d' % s['start'].year if year != s['start'].year else ''
         month = s['start'].strftime('%B')
+        year = s['start'].year
         if block != month:
             if block:
                 print('</tbody></table>')
-            print('<h1>%s</h1>' % month)
+            print('<h1>%s%s</h1>' % (month, year_suffix))
             print('<table><tbody>')
             block = month
 
@@ -300,16 +301,15 @@ def totals(files):
     sessions = []
     for file in files:
         sessions.append(parse(file))
-    year = datetime.datetime.now().year
-    sessions = sorted(filter(lambda s: s['start'].year == year,
-        sessions), key=lambda s: s['start'])
+    sessions = sorted(sessions, key=lambda s: s['start'])
     volume = {}
     for s in sessions:
-        volume.setdefault(s['start'].month, [])
-        volume[s['start'].month].append(s['volume'])
+        month = s['start'].replace(day=1)
+        volume.setdefault(month, [])
+        volume[month].append(s['volume'])
     writer = csv.writer(sys.stdout)
     for month in volume:
-        writer.writerow([datetime.date(year, month, 1).strftime('%B %Y'),
+        writer.writerow([month.strftime('%B %Y'),
             sum(volume[month]), len(volume[month])])
 
 ##############################################################################
