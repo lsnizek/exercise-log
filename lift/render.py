@@ -258,7 +258,7 @@ parser.add_argument('-p', '--picture', action='append', nargs=2,
 parser.add_argument('-l', '--landing', nargs='+',
     metavar='XMLFILE', help='HTML landing page (HTML filenames from XML ones)')
 parser.add_argument('-s', '--summary', nargs='+',
-    metavar='CSVFILE', help='CSV summary')
+    metavar='XMLFILE', help='CSV summary')
 parser.add_argument('-1', '--single',
     metavar='XMLFILE', help='HTML diary page')
 args = vars(parser.parse_args())
