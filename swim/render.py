@@ -304,13 +304,12 @@ def totals(files):
     sessions = sorted(sessions, key=lambda s: s['start'])
     volume = {}
     for s in sessions:
-        month = s['start'].replace(day=1)
+        month = s['start'].replace(day=1).strftime('%B %Y')
         volume.setdefault(month, [])
         volume[month].append(s['volume'])
     writer = csv.writer(sys.stdout)
     for month in volume:
-        writer.writerow([month.strftime('%B %Y'),
-            sum(volume[month]), len(volume[month])])
+        writer.writerow([month, sum(volume[month]), len(volume[month])])
 
 ##############################################################################
 # main
