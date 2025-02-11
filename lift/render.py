@@ -210,7 +210,7 @@ def single(file, pictures):
     p_or_ul(session['warmup'], 'Warm-up: ')
 
     for l in session['lifts']:
-        print('<h3>%dkg %s</h3>' % (l['weight'], l['kind']))
+        print('<h3>%gkg %s</h3>' % (l['weight'], l['kind']))
 
         p_or_ul(l['preparation'], '')
         if 'comments' in l:
@@ -241,7 +241,7 @@ def summary(files):
             writer.writerow([
                 s['start'].strftime('%Y-%m-%d'),
                 l['kind'],
-                '%dkg' % l['weight'],
+                '%gkg' % l['weight'],
                 ''
             ])
 
