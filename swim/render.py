@@ -312,6 +312,51 @@ def totals(files):
         writer.writerow([month, sum(volume[month]), len(volume[month])])
 
 ##############################################################################
+# --database
+##############################################################################
+
+def database(files):
+    sessions = []
+    for file in files:
+        sessions.append(parse(file))
+    sessions = sorted(sessions, key=lambda s: s['start'])
+    writer = csv.writer(sys.stdout, delimiter='\t', lineterminator='\n')
+    for s in sessions:
+        spacious = False
+        try:
+            spacious = s['venue']['spacious']
+        except KeyError:
+            pass
+
+        venue_short = unidecode.unidecode(s['venue']['name']).lower()
+
+        summary = []
+        strokes = []
+        for workset in s['sets']:
+            summary.append(workset['summary'])
+            if 'stroke' in workset:
+                strokes.append(workset['stroke'])
+
+        # could support multi-stroke sessions, etc
+        stroke = 'other'
+        if len(list(set(strokes))) == 1:
+            if strokes[0] in ['fly', 'back', 'breast', 'free']:
+                stroke = strokes[0]
+            elif strokes[0].startswith('IM'):
+                stroke = 'IM'
+
+        writer.writerow([
+            s['start'],
+            venue_short,
+            s['venue']['name'],
+            spacious,
+            s['volume'],
+            s['kind'],
+            stroke,
+            ', '.join(summary)
+        ])
+
+##############################################################################
 # main
 ##############################################################################
 
@@ -324,6 +369,8 @@ parser.add_argument('-l', '--landing', nargs='+',
     metavar='XMLFILE', help='HTML landing page (HTML filenames from XML ones)')
 parser.add_argument('-s', '--totals', nargs='+',
     metavar='XMLFILE', help='Totals listing')
+parser.add_argument('-d', '--database', nargs='+',
+    metavar='XMLFILE', help='Database-friendly summary with some detail')
 parser.add_argument('-1', '--single',
     metavar='XMLFILE', help='HTML diary page')
 args = vars(parser.parse_args())
@@ -341,6 +388,8 @@ if args['landing']:
         lambda s: '%s.html' % s['filename'].replace('.xml', ''))
 elif args['totals']:
     totals(args['totals'])
+elif args['database']:
+    database(args['database'])
 elif args['single']:
     single(args['single'], args['picture'])
 else:

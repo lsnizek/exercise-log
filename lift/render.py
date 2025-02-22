@@ -246,6 +246,43 @@ def summary(files):
             ])
 
 ##############################################################################
+# --database
+##############################################################################
+
+def database(files):
+    sessions = []
+    for file in files:
+        sessions.append(parse(file))
+    sessions = sorted(sessions, key=lambda s: s['start'])
+    writer = csv.writer(sys.stdout, delimiter='\t', lineterminator='\n')
+    for s in sessions:
+        venue_short = unidecode.unidecode(s['venue']['name']).lower()
+
+        lifts = {
+            'squat': -1.0,
+            'press': -1.0,
+            'bench': -1.0,
+            'pull-up': -1.0,
+            'deadlift': -1.0,
+            'clean': -1.0
+        }
+        for l in s['lifts']:
+            assert l['kind'] in lifts
+            lifts[l['kind']] = l['weight']
+
+        writer.writerow([
+            s['start'],
+            venue_short,
+            s['venue']['name'],
+            lifts['squat'],
+            lifts['press'],
+            lifts['bench'],
+            lifts['pull-up'],
+            lifts['deadlift'],
+            lifts['clean']
+        ])
+
+##############################################################################
 # main
 ##############################################################################
 
@@ -259,6 +296,8 @@ parser.add_argument('-l', '--landing', nargs='+',
     metavar='XMLFILE', help='HTML landing page (HTML filenames from XML ones)')
 parser.add_argument('-s', '--summary', nargs='+',
     metavar='XMLFILE', help='CSV summary')
+parser.add_argument('-d', '--database', nargs='+',
+    metavar='XMLFILE', help='Database-friendly summary with some detail')
 parser.add_argument('-1', '--single',
     metavar='XMLFILE', help='HTML diary page')
 args = vars(parser.parse_args())
@@ -276,6 +315,8 @@ if args['landing']:
         lambda s: '%s.html' % s['filename'].replace('.xml', ''))
 elif args['summary']:
     summary(args['summary'])
+elif args['database']:
+    database(args['database'])
 elif args['single']:
     pictures = {}
     if args['picture']:
