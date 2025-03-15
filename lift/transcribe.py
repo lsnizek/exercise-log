@@ -24,14 +24,14 @@ assert not root.find('head') is None
 assert not root.find('head').find('title') is None
 assert not root.find('body') is None
 title = root.find('head').find('title').text
-def check_outline_tags(x):
+def check_outline_tags(x, depth):
     for child in x:
         assert child.tag == 'outline'
         assert 'text' in child.attrib
-        if child.attrib['text'] == 'times': # heuristic
+        if child.attrib['text'] == 'times' and depth == 0: # heuristic
             raise NameError('\'times\' outline found, probably a swim session')
-        check_outline_tags(child)
-check_outline_tags(root.find('body'))
+        check_outline_tags(child, depth + 1)
+check_outline_tags(root.find('body'), 0)
 
 other = ['time', 'venue', 'warm-up']
 
