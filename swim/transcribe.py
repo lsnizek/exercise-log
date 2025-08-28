@@ -65,7 +65,7 @@ for label in mandatory:
     if label not in outlines:
         raise NameError('missing "%s"' % label)
 b = xml.etree.ElementTree.TreeBuilder()
-b.start('session', {})
+session = b.start('session', {})
 meta = b.start('meta', {'type': 'swim'})
 b.end('meta')
 venue = b.start('venue', {})
@@ -124,6 +124,8 @@ for label, lines in outlines.items():
         insert_notes(insert_el(add_or_get_swimset(sets), 'comments'), lines)
     elif label == 'times':
         insert_notes(insert_el(add_or_get_swimset(sets), 'times'), lines)
+    elif label == 'cool-down':
+        insert_notes(insert_el(session, 'cooldown'), lines)
     elif label == 'next':
         insert_notes(insert_el(add_or_get_swimset(sets), 'next'), lines)
     elif label == 'video':

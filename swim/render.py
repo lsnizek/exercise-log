@@ -95,6 +95,10 @@ def parse_work(el):
         sets.append(parse_set(child))
     return sets
 
+def parse_cooldown(el):
+    return parse_notes(el)
+
+
 def parse(file):
     session = {}
     try:
@@ -112,6 +116,8 @@ def parse(file):
             session['venue'] = parse_venue(child)
         elif child.tag == 'warmup':
             session['warmup'] = parse_warmup(child)
+        elif child.tag == 'cooldown':
+            session['cooldown'] = parse_cooldown(child)
         elif child.tag == 'work':
             session['sets'] = parse_work(child)
         else:
@@ -285,6 +291,9 @@ def single(file, picture):
         if 'video' in s:
             p_or_ul(s['video'], 'Video: ')
         p_or_ul(s['next'], 'Next: ')
+
+    if 'cooldown' in session:
+        p_or_ul(session['cooldown'], 'Cool-down: ')
 
     if picture:
         print('<section><p><img width="480" src="%s" alt="%s"></p><section>' % \
