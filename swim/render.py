@@ -198,7 +198,7 @@ def landing(files, title, url_generator):
             pass
 
         url = url_generator(s)
-        venue_short = unidecode.unidecode(s['venue']['name']).lower()
+        venue_short = unidecode.unidecode(s['venue']['name']).lower().replace(' ', '')
         venue_full = s['venue']['name'].encode('ascii', 'xmlcharrefreplace').decode()
         summary = []
         strokes = []
@@ -337,7 +337,7 @@ def database(files):
         except KeyError:
             pass
 
-        venue_short = unidecode.unidecode(s['venue']['name']).lower()
+        venue_short = unidecode.unidecode(s['venue']['name']).lower().replace(' ', '')
 
         summary = []
         strokes = []
