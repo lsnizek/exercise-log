@@ -60,7 +60,7 @@ for child in root.find('body'):
         outlines[kind] = suboutlines
 
 mandatory = {
-    'lifts': ['weight', 'preparation', 'next'],
+    'lifts': ['weight', 'preparation', 'warm-up', 'next'],
     'other': ['time']
 }
 simple = ['time', 'weight']
@@ -133,6 +133,8 @@ for kind in outlines:
         elif label == 'preparation':
             preparation = insert_el(add_or_get_lift(lifts, kind), 'preparation')
             insert_notes(preparation, lines)
+        elif label == 'warm-up':
+            insert_notes(insert_el(add_or_get_lift(lifts, kind), 'warm-up'), lines)
         elif label == 'comments':
             insert_notes(insert_el(add_or_get_lift(lifts, kind), 'comments'), lines)
         elif label == 'video':

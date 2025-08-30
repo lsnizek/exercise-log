@@ -60,10 +60,10 @@ def parse_lift(el):
     for child in el:
         if child.tag == 'preparation':
             s['preparation'] = parse_notes(child)
+        elif child.tag == 'warm-up':
+            s['warmup'] = parse_notes(child)
         elif child.tag == 'comments':
             s['comments'] = parse_notes(child)
-        elif child.tag == 'times':
-            s['times'] = parse_notes(child)
         elif child.tag == 'next':
             s['next'] = parse_notes(child)
         elif child.tag == 'video':
@@ -213,6 +213,8 @@ def single(file, pictures):
         print('<h3>%gkg %s</h3>' % (l['weight'], l['kind']))
 
         p_or_ul(l['preparation'], '')
+        if 'warmup' in l:
+            p_or_ul(l['warmup'], 'Warm-up: ')
         if 'comments' in l:
             p_or_ul(l['comments'], 'Comments: ')
         if 'video' in l:
