@@ -6,7 +6,7 @@ import sys
 import unidecode
 import xml.etree.ElementTree
 
-order = ['squat', 'press', 'bench', 'pull-up', 'deadlift', 'clean']
+order = ['squat', 'press', 'bench', 'pull-up', 'dip', 'deadlift', 'clean']
 
 ##############################################################################
 # helpers
@@ -136,8 +136,9 @@ def landing(files, title, url_generator):
       .col3            { width: 12pt; text-align: center; background: #EBEBEB; }
       .col4            { width: 36pt; text-align: right; padding-right: 4pt; }
       #ex0             { background: #DBDBDB; }
-      #ex1, #ex2, #ex3 { background: #C9C9C9; }
-      #ex4, #ex5       { background: #B8B8B8; }
+      #ex1, #ex2,
+        #ex3, #ex4     { background: #C9C9C9; }
+      #ex5, #ex6       { background: #B8B8B8; }
     </style>''')
     print('</head><body>')
 
@@ -265,6 +266,7 @@ def database(files):
             'press': -1.0,
             'bench': -1.0,
             'pull-up': -1.0,
+            'dip': -1.0,
             'deadlift': -1.0,
             'clean': -1.0
         }
@@ -280,6 +282,7 @@ def database(files):
             lifts['press'],
             lifts['bench'],
             lifts['pull-up'],
+            lifts['dip'],
             lifts['deadlift'],
             lifts['clean']
         ])
