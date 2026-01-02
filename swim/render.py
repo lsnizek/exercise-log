@@ -1,6 +1,7 @@
 import argparse
 import csv
 import datetime
+import glob
 import html
 import os
 import sys
@@ -380,6 +381,8 @@ parser.add_argument('-s', '--totals', nargs='+',
     metavar='XMLFILE', help='Totals listing')
 parser.add_argument('-d', '--database', nargs='+',
     metavar='XMLFILE', help='Database-friendly summary with some detail')
+parser.add_argument('-D', '--database-dir', nargs='+',
+    metavar='DIRECTORY', help='Database-friendly summary with some detail (scan directory for XML files)')
 parser.add_argument('-1', '--single',
     metavar='XMLFILE', help='HTML diary page')
 args = vars(parser.parse_args())
@@ -399,6 +402,9 @@ elif args['totals']:
     totals(args['totals'])
 elif args['database']:
     database(args['database'])
+elif args['database_dir']:
+    for directory in args['database_dir']:
+        database(glob.glob(os.path.join(directory, '*.xml')))
 elif args['single']:
     single(args['single'], args['picture'])
 else:
