@@ -14,7 +14,7 @@ else:
     tree = xml.etree.ElementTree.parse(sys.argv[1])
 root = tree.getroot()
 
-# date supplied on the side as OPML document has it in its file name
+# date supplied on the side otherwise only present in OPML document file name
 date = datetime.datetime.strptime(sys.argv[2].split('-')[0], '%Y%m%d')
 
 # run some basic OPML checks as per OPML 2.0 specification plus require TITLE
@@ -26,14 +26,14 @@ assert not root.find('body') is None
 title = root.find('head').find('title').text
 def check_outline_tags(x, depth):
     for child in x:
-        assert child.tag == 'outline'
+        assert 'outline' == child.tag
         assert 'text' in child.attrib
         if child.attrib['text'] == 'volume' and depth == 0: # heuristic
-            raise NameError('\'volume\' outline found, probably a swim session')
+            raise NameError('"volume" outline found, probably a swim session')
         check_outline_tags(child, depth + 1)
 check_outline_tags(root.find('body'), 0)
 
-other = ['time', 'venue', 'warm-up']
+other = ['time', 'injuries', 'venue', 'warm-up']
 
 # gather outlines following the OPML format (lines one level below labels)
 # preprocess 'squat 70kg' into 'squat -> weight: 70kg'
@@ -46,11 +46,9 @@ def gather_lines(node):
     return lines
 for child in root.find('body'):
     label = child.attrib['text']
-    if label in other:
-        assert label not in outlines['other']
-        outlines['other'][label] = gather_lines(child)
-    else:
-        [kind, weight] = label.rsplit(maxsplit=1)
+    split = label.rsplit(maxsplit=1)
+    if len(split) == 2:
+        [kind, weight] = split
         assert kind not in outlines
         suboutlines = {'weight': [weight]}
         for grandchild in child:
@@ -58,6 +56,9 @@ for child in root.find('body'):
             assert label not in suboutlines
             suboutlines[label] = gather_lines(grandchild)
         outlines[kind] = suboutlines
+    else:
+        assert label not in outlines['other']
+        outlines['other'][label] = gather_lines(child)
 
 mandatory = {
     'lifts': ['weight', 'preparation', 'warm-up', 'next'],
@@ -84,6 +85,8 @@ b = xml.etree.ElementTree.TreeBuilder()
 b.start('session', {})
 meta = b.start('meta', {'type': 'lift'})
 b.end('meta')
+injuries = b.start('injuries', {})
+b.end('injuries')
 venue = b.start('venue', {})
 b.end('venue')
 warmup = b.start('warmup', {})
@@ -117,12 +120,14 @@ for label, lines in outlines['other'].items():
     if label == 'time':
         time = dateutil.parser.parse(lines[0] + ' CEST')
         meta.set('start', str(datetime.datetime.combine(date, time.time())))
+    elif label == 'injuries':
+        insert_notes(injuries, lines)
     elif label == 'venue':
         insert_notes(venue, lines)
     elif label == 'warm-up':
         insert_notes(warmup, lines)
     else:
-        raise NameError('unknown outline %s' % label)
+        raise NameError('unknown outline "%s"' % label)
 for kind in outlines:
     if kind == 'other':
         continue

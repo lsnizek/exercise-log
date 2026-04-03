@@ -43,6 +43,9 @@ def parse_meta(el):
     start = datetime.datetime.strptime(el.attrib['start'], '%Y-%m-%d %H:%M:%S')
     return start
 
+def parse_injuries(el):
+    return parse_notes(el)
+
 def parse_venue(el):
     assert 'name' in el.attrib
     venue = {'name': el.attrib['name']}
@@ -96,6 +99,8 @@ def parse(file):
     for child in root:
         if child.tag == 'meta':
             session['start'] = parse_meta(child)
+        elif child.tag == 'injuries':
+            session['injuries'] = parse_injuries(child)
         elif child.tag == 'venue':
             session['venue'] = parse_venue(child)
         elif child.tag == 'warmup':
@@ -208,6 +213,9 @@ def single(file, pictures):
 
     if 'notes' in session['venue']:
         p_or_ul(session['venue']['notes'], '')
+
+    if session['injuries']:
+        p_or_ul(session['injuries'], 'Injuries: ')
 
     p_or_ul(session['warmup'], 'Warm-up: ')
 

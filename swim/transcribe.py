@@ -14,7 +14,7 @@ else:
     tree = xml.etree.ElementTree.parse(sys.argv[1])
 root = tree.getroot()
 
-# date supplied on the side as OPML document has it in its file name
+# date supplied on the side otherwise only present in OPML document file name
 date = datetime.datetime.strptime(sys.argv[2].split('-')[0], '%Y%m%d')
 
 # run some basic OPML checks as per OPML 2.0 specification plus require TITLE
@@ -26,10 +26,10 @@ assert not root.find('body') is None
 title = root.find('head').find('title').text
 def check_outline_tags(x, depth):
     for child in x:
-        assert child.tag == 'outline'
+        assert 'outline' == child.tag
         assert 'text' in child.attrib
         if 'squat' in child.attrib['text'] and depth == 0: # heuristic
-            raise NameError('\'squat\' outline found, probably a lift session')
+            raise NameError('"squat" outline found, probably a lift session')
         check_outline_tags(child, depth + 1)
 check_outline_tags(root.find('body'), 0)
 
@@ -68,6 +68,8 @@ b = xml.etree.ElementTree.TreeBuilder()
 session = b.start('session', {})
 meta = b.start('meta', {'type': 'swim'})
 b.end('meta')
+injuries = b.start('injuries', {})
+b.end('injuries')
 venue = b.start('venue', {})
 b.end('venue')
 warmup = b.start('warmup', {})
@@ -104,6 +106,8 @@ for label, lines in outlines.items():
         meta.set('kind', lines[0])
     elif label == 'volume':
         meta.set('volume', str(int(lines[0].rstrip('m'))))
+    elif label == 'injuries':
+        insert_notes(injuries, lines)
     elif label == 'venue':
         insert_notes(venue, lines)
         for note in lines:
@@ -131,7 +135,7 @@ for label, lines in outlines.items():
     elif label == 'video':
         insert_notes(insert_el(add_or_get_swimset(sets), 'video'), lines)
     else:
-        raise NameError('unknown outline %s' % label)
+        raise NameError('unknown outline "%s"' % label)
 
 # convert intermediate tree into XML tree
 print(xml.etree.ElementTree.tostring(b.close(),

@@ -47,6 +47,9 @@ def parse_meta(el):
         volume = 0
     return start, kind, volume
 
+def parse_injuries(el):
+    return parse_notes(el)
+
 def parse_venue(el):
     assert 'name' in el.attrib
     venue = {'name': el.attrib['name']}
@@ -99,7 +102,6 @@ def parse_work(el):
 def parse_cooldown(el):
     return parse_notes(el)
 
-
 def parse(file):
     session = {}
     try:
@@ -113,6 +115,8 @@ def parse(file):
         if child.tag == 'meta':
             session['start'], session['kind'], session['volume'] = \
                 parse_meta(child)
+        elif child.tag == 'injuries':
+            session['injuries'] = parse_injuries(child)
         elif child.tag == 'venue':
             session['venue'] = parse_venue(child)
         elif child.tag == 'warmup':
@@ -276,6 +280,9 @@ def single(file, picture):
 
     if 'notes' in session['venue']:
         p_or_ul(session['venue']['notes'], '')
+
+    if session['injuries']:
+        p_or_ul(session['injuries'], 'Injuries: ')
 
     p_or_ul(session['warmup'], 'Warm-up: ')
 
