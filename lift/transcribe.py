@@ -61,7 +61,7 @@ for child in root.find('body'):
 
 mandatory = {
     'lifts': ['weight', 'preparation', 'warm-up', 'next'],
-    'other': ['time']
+    'other': ['time', 'warm-up']
 }
 simple = ['time', 'weight']
 
