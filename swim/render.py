@@ -127,7 +127,7 @@ def parse(file):
             session['sets'] = parse_work(child)
         else:
             raise NameError('unknown tag "%s"' % child.tag)
-    mandatory = ['start', 'kind', 'venue', 'warmup', 'sets']
+    mandatory = ['start', 'kind', 'venue', 'sets']
     for tag in mandatory:
         assert tag in session
     session['filename'] = os.path.basename(file)
@@ -284,7 +284,8 @@ def single(file, picture):
     if 'injuries' in session and session['injuries']:
         p_or_ul(session['injuries'], 'Injuries: ')
 
-    p_or_ul(session['warmup'], 'Warm-up: ')
+    if 'warmup' in session:
+        p_or_ul(session['warmup'], 'Warm-up: ')
 
     for s in session['sets']:
         print('<h3>%s</h3>' % s['summary'])

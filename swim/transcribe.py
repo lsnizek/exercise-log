@@ -48,7 +48,6 @@ mandatory = [
     'time',
     'kind',
     'injuries',
-    'warm-up',
     'preparation',
     'summary',
     'next',
@@ -73,8 +72,6 @@ injuries = b.start('injuries', {})
 b.end('injuries')
 venue = b.start('venue', {})
 b.end('venue')
-warmup = b.start('warmup', {})
-b.end('warmup')
 work = b.start('work', {})
 sets = b.start('swimming', {})
 b.end('swimming')
@@ -114,8 +111,6 @@ for label, lines in outlines.items():
         for note in lines:
             if note.find('spacious') >= 0:
                 venue.set('spacious', "yes")
-    elif label == 'warm-up':
-        insert_notes(warmup, lines)
     elif label == 'preparation':
         preparation = insert_el(add_or_get_swimset(sets), 'preparation')
         insert_notes(preparation, lines)
