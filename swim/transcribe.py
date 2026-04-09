@@ -47,6 +47,7 @@ for child in root.find('body'):
 mandatory = [
     'time',
     'kind',
+    'injuries',
     'warm-up',
     'preparation',
     'summary',

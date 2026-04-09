@@ -214,7 +214,7 @@ def single(file, pictures):
     if 'notes' in session['venue']:
         p_or_ul(session['venue']['notes'], '')
 
-    if session['injuries']:
+    if 'injuries' in session and session['injuries']:
         p_or_ul(session['injuries'], 'Injuries: ')
 
     p_or_ul(session['warmup'], 'Warm-up: ')
