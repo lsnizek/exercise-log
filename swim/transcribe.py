@@ -23,7 +23,7 @@ assert packaging.version.parse(root.attrib['version']).major == 2
 assert not root.find('head') is None
 assert not root.find('head').find('title') is None
 assert not root.find('body') is None
-title = root.find('head').find('title').text
+title = root.find('head').find('title').text.strip()
 def check_outline_tags(x, depth):
     for child in x:
         assert 'outline' == child.tag
@@ -46,14 +46,13 @@ for child in root.find('body'):
 
 mandatory = [
     'time',
-    'kind',
     'injuries',
     'preparation',
     'summary',
     'next',
     'volume'
 ]
-simple = ['time', 'kind', 'volume', 'stroke', 'summary']
+simple = ['time', 'volume', 'stroke', 'summary']
 
 # prepare output XML tree
 for label in simple:
@@ -95,13 +94,14 @@ def add_or_get_swimset(sets):
         return s
     else:
         return insert_el(sets, 'set')
-venue.set('name', title)
+if title.count(' ') < 1:
+    raise NameError('note title not at least 2 words for venue and kind: %s' % title)
+venue.set('name', title.split(' ')[0])
+meta.set('kind', title[title.index(' ') + 1:])
 for label, lines in outlines.items():
     if label == 'time':
         time = dateutil.parser.parse(lines[0] + ' CEST')
         meta.set('start', str(datetime.datetime.combine(date, time.time())))
-    elif label == 'kind':
-        meta.set('kind', lines[0])
     elif label == 'volume':
         meta.set('volume', str(int(lines[0].rstrip('m'))))
     elif label == 'injuries':
