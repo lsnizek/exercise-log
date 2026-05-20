@@ -342,5 +342,6 @@ elif args['single']:
         pictures = {kind: jpgfile for [jpgfile, kind] in args['picture']}
     single(args['single'], pictures)
 else:
-    print('must specify --landing, --summary or --single', file=sys.stderr)
+    print('specify mode:', file=sys.stderr)
+    print('--landing --summary --database[-dir] --single', file=sys.stderr)
     sys.exit(2)

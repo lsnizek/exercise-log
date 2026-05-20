@@ -134,6 +134,60 @@ def parse(file):
     return session
 
 ##############################################################################
+# HTML common
+##############################################################################
+
+def html_session(session, shortdate):
+    print('<header><h2>%s</h2>' % shortdate)
+
+    strokes = []
+    for s in session['sets']:
+        if 'stroke' in s:
+            strokes.append(html.escape(s['stroke']))
+
+    print('<p>%s, %s, %s%s, %dm</p></header>' % (\
+        time_ampm(session['start']),
+        session['venue']['name'],
+        ' & '.join(strokes) + ', ' if len(strokes) > 0 else '',
+        session['kind'],
+        session['volume']))
+
+    def p_or_ul(obj, prefix):
+        if type(obj) == list:
+            print('<section>%s<ul>' % prefix)
+            for bullet in obj:
+                print('<li>%s</li>' % bullet)
+            print('</ul></section>')
+        else:
+            print('<section><p>%s%s</p></section>' % (prefix, capitalise(obj)))
+
+    if 'notes' in session['venue']:
+        p_or_ul(session['venue']['notes'], '')
+
+    if 'injuries' in session and session['injuries']:
+        p_or_ul(session['injuries'], 'Injuries: ')
+
+    if 'warmup' in session:
+        p_or_ul(session['warmup'], 'Warm-up: ')
+
+    for s in session['sets']:
+        print('<h3>%s</h3>' % s['summary'])
+
+        p_or_ul(s['preparation'], '')
+        if 'comments' in s:
+            p_or_ul(s['comments'], 'Comments: ')
+        if 'structure' in s:
+            p_or_ul(s['structure'], 'Structure: ')
+        if 'times' in s:
+            p_or_ul(s['times'], 'Times: ')
+        if 'video' in s:
+            p_or_ul(s['video'], 'Video: ')
+        p_or_ul(s['next'], 'Next: ')
+
+    if 'cooldown' in session:
+        p_or_ul(session['cooldown'], 'Cool-down: ')
+
+##############################################################################
 # --landing
 ##############################################################################
 
@@ -255,54 +309,8 @@ def single(file, picture):
     print('<html><head><meta charset="utf-8">')
     print('<link rel="icon" type="image/x-icon" href="favicon.ico">')
     print('<title>%s</title></head><body><main>' % shortdate)
-    print('<header><h2>%s</h2>' % shortdate)
 
-    strokes = []
-    for s in session['sets']:
-        if 'stroke' in s:
-            strokes.append(html.escape(s['stroke']))
-
-    print('<p>%s, %s, %s%s, %dm</p></header>' % (\
-        time_ampm(session['start']),
-        session['venue']['name'],
-        ' & '.join(strokes) + ', ' if len(strokes) > 0 else '',
-        session['kind'],
-        session['volume']))
-
-    def p_or_ul(obj, prefix):
-        if type(obj) == list:
-            print('<section>%s<ul>' % prefix)
-            for bullet in obj:
-                print('<li>%s</li>' % bullet)
-            print('</ul></section>')
-        else:
-            print('<section><p>%s%s</p></section>' % (prefix, capitalise(obj)))
-
-    if 'notes' in session['venue']:
-        p_or_ul(session['venue']['notes'], '')
-
-    if 'injuries' in session and session['injuries']:
-        p_or_ul(session['injuries'], 'Injuries: ')
-
-    if 'warmup' in session:
-        p_or_ul(session['warmup'], 'Warm-up: ')
-
-    for s in session['sets']:
-        print('<h3>%s</h3>' % s['summary'])
-
-        p_or_ul(s['preparation'], '')
-        if 'comments' in s:
-            p_or_ul(s['comments'], 'Comments: ')
-        if 'structure' in s:
-            p_or_ul(s['structure'], 'Structure: ')
-        if 'times' in s:
-            p_or_ul(s['times'], 'Times: ')
-        if 'video' in s:
-            p_or_ul(s['video'], 'Video: ')
-        p_or_ul(s['next'], 'Next: ')
-
-    if 'cooldown' in session:
-        p_or_ul(session['cooldown'], 'Cool-down: ')
+    html_session(session, shortdate)
 
     if picture:
         print('<section><p><img width="480" src="%s" alt="%s"></p><section>' % \
@@ -375,6 +383,26 @@ def database(files):
         ])
 
 ##############################################################################
+# --dir
+##############################################################################
+
+def dir(files, title):
+    sessions = []
+    for file in files:
+        sessions.append(parse(file))
+    sessions = sorted(sessions, key=lambda s: s['start'])
+
+    print('<html><head><meta charset="utf-8">')
+    print('<link rel="icon" type="image/x-icon" href="favicon.ico">')
+    print('<title>%s</title></head><body><main>' % title)
+
+    for session in sessions:
+        shortdate = session['start'].strftime('%b %-d')
+        html_session(session, shortdate)
+
+    print('</main></body></html>')
+
+##############################################################################
 # main
 ##############################################################################
 
@@ -391,6 +419,8 @@ parser.add_argument('-d', '--database', nargs='+',
     metavar='XMLFILE', help='Database-friendly summary with some detail')
 parser.add_argument('-D', '--database-dir', nargs='+',
     metavar='DIRECTORY', help='Database-friendly summary with some detail (scan directory for XML files)')
+parser.add_argument('-r', '--dir', nargs='+',
+    metavar='XMLFILE', help='HTML diary pages all in one (without pictures)')
 parser.add_argument('-1', '--single',
     metavar='XMLFILE', help='HTML diary page')
 args = vars(parser.parse_args())
@@ -398,12 +428,13 @@ if len(sys.argv) == 1:
     parser.print_usage()
     sys.exit(2)
 
-if args['landing']:
+if args['landing'] or args['dir']:
     title = args['title']
     if not title:
         title = 'Swimming'
         print('warning: --title not specifed, will use default "%s"' % title,
             file=sys.stderr)
+if args['landing']:
     landing(args['landing'], args['title'],
         lambda s: '%s.html' % s['filename'].replace('.xml', ''))
 elif args['totals']:
@@ -415,6 +446,9 @@ elif args['database_dir']:
         database(glob.glob(os.path.join(directory, '*.xml')))
 elif args['single']:
     single(args['single'], args['picture'])
+elif args['dir']:
+    dir(args['dir'], args['title'])
 else:
-    print('must specify --landing, --totals or --single', file=sys.stderr)
+    print('specify mode:', file=sys.stderr)
+    print('--landing --totals --database[-dir] --single --dir', file=sys.stderr)
     sys.exit(2)
