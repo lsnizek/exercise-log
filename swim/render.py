@@ -428,12 +428,14 @@ if len(sys.argv) == 1:
     parser.print_usage()
     sys.exit(2)
 
+title = 'Swimming'
 if args['landing'] or args['dir']:
-    title = args['title']
-    if not title:
-        title = 'Swimming'
+    if args['title']:
+        title = args['title']
+    else:
         print('warning: --title not specifed, will use default "%s"' % title,
             file=sys.stderr)
+
 if args['landing']:
     landing(args['landing'], args['title'],
         lambda s: '%s.html' % s['filename'].replace('.xml', ''))
