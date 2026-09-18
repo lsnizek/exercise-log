@@ -99,7 +99,9 @@ venue.set('name', title.split(' ')[0])
 meta.set('kind', title[title.index(' ') + 1:])
 for label, lines in outlines.items():
     if label == 'time':
-        time = dateutil.parser.parse(lines[0] + ' CEST')
+        # string replace to turn '7.30am' into '7:30am' familiar to dateutil
+        time = dateutil.parser.parse(lines[0].replace('.', ':') + ' CEST')
+        print(lines[0], time, file=sys.stderr)
         meta.set('start', str(datetime.datetime.combine(date, time.time())))
     elif label == 'volume':
         meta.set('volume', str(int(lines[0].rstrip('m'))))

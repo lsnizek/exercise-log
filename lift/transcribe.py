@@ -118,7 +118,8 @@ def add_or_get_lift(lifts, kind):
 venue.set('name', title)
 for label, lines in outlines['other'].items():
     if label == 'time':
-        time = dateutil.parser.parse(lines[0] + ' CEST')
+        # string replace to turn '7.30am' into '7:30am' familiar to dateutil
+        time = dateutil.parser.parse(lines[0].replace('.', ':') + ' CEST')
         meta.set('start', str(datetime.datetime.combine(date, time.time())))
     elif label == 'injuries':
         insert_notes(injuries, lines)
