@@ -10,6 +10,50 @@ import xml.etree.ElementTree
 order = ['squat', 'press', 'bench', 'pull-up', 'dip', 'deadlift', 'clean']
 
 ##############################################################################
+# HTML common
+##############################################################################
+
+def html_session(session, shortdate, pictures):
+    print('<header><h2>%s</h2>' % shortdate)
+
+    # explicit encoding: encode('ascii', 'xmlcharrefreplace').decode()
+    print('<p>%s, %s</p></header>' % \
+        (time_ampm(session['start']), session['venue']['name']))
+
+    def p_or_ul(obj, prefix):
+        if type(obj) == list:
+            print('<section>%s<ul>' % prefix)
+            for bullet in obj:
+                print('<li>%s</li>' % bullet)
+            print('</ul></section>')
+        else:
+            print('<section><p>%s%s</p></section>' % (prefix, capitalise(obj)))
+
+    if 'notes' in session['venue']:
+        p_or_ul(session['venue']['notes'], '')
+
+    if 'injuries' in session and session['injuries']:
+        p_or_ul(session['injuries'], 'Injuries: ')
+
+    p_or_ul(session['warmup'], 'Warm-up: ')
+
+    for l in session['lifts']:
+        print('<h3>%gkg %s</h3>' % (l['weight'], l['kind']))
+
+        p_or_ul(l['preparation'], '')
+        if 'warmup' in l:
+            p_or_ul(l['warmup'], 'Warm-up: ')
+        if 'comments' in l:
+            p_or_ul(l['comments'], 'Comments: ')
+        if 'video' in l:
+            p_or_ul(l['video'], 'Video: ')
+        p_or_ul(l['next'], 'Next: ')
+
+        if l['kind'] in pictures:
+            print('<section><p><img width="200" src="%s" alt="%s"></p></section>' % \
+                (pictures[l['kind']], shortdate))
+
+##############################################################################
 # helpers
 ##############################################################################
 
@@ -196,44 +240,8 @@ def single(file, pictures):
     print('<html><head><meta charset="utf-8">')
     print('<link rel="icon" type="image/x-icon" href="favicon.ico">')
     print('<title>%s</title></head><body><main>' % shortdate)
-    print('<header><h2>%s</h2>' % shortdate)
 
-    # explicit encoding: encode('ascii', 'xmlcharrefreplace').decode()
-    print('<p>%s, %s</p></header>' % \
-        (time_ampm(session['start']), session['venue']['name']))
-
-    def p_or_ul(obj, prefix):
-        if type(obj) == list:
-            print('<section>%s<ul>' % prefix)
-            for bullet in obj:
-                print('<li>%s</li>' % bullet)
-            print('</ul></section>')
-        else:
-            print('<section><p>%s%s</p></section>' % (prefix, capitalise(obj)))
-
-    if 'notes' in session['venue']:
-        p_or_ul(session['venue']['notes'], '')
-
-    if 'injuries' in session and session['injuries']:
-        p_or_ul(session['injuries'], 'Injuries: ')
-
-    p_or_ul(session['warmup'], 'Warm-up: ')
-
-    for l in session['lifts']:
-        print('<h3>%gkg %s</h3>' % (l['weight'], l['kind']))
-
-        p_or_ul(l['preparation'], '')
-        if 'warmup' in l:
-            p_or_ul(l['warmup'], 'Warm-up: ')
-        if 'comments' in l:
-            p_or_ul(l['comments'], 'Comments: ')
-        if 'video' in l:
-            p_or_ul(l['video'], 'Video: ')
-        p_or_ul(l['next'], 'Next: ')
-
-        if l['kind'] in pictures:
-            print('<section><p><img width="200" src="%s" alt="%s"></p></section>' % \
-                (pictures[l['kind']], shortdate))
+    html_session(session, shortdate, pictures)
 
     # mobile Safari reader mode seems to require the 'main' semantic HTML tag
     print('</main></body></html>')
@@ -297,6 +305,26 @@ def database(files):
         ])
 
 ##############################################################################
+# --dir
+##############################################################################
+
+def dir(files, title):
+    sessions = []
+    for file in files:
+        sessions.append(parse(file))
+    sessions = sorted(sessions, key=lambda s: s['start'])
+
+    print('<html><head><meta charset="utf-8">')
+    print('<link rel="icon" type="image/x-icon" href="favicon.ico">')
+    print('<title>%s</title></head><body><main>' % title)
+
+    for session in sessions:
+        shortdate = session['start'].strftime('%b %-d')
+        html_session(session, shortdate, {})
+
+    print('</main></body></html>')
+
+##############################################################################
 # main
 ##############################################################################
 
@@ -314,6 +342,8 @@ parser.add_argument('-d', '--database', nargs='+',
     metavar='XMLFILE', help='Database-friendly summary with some detail')
 parser.add_argument('-D', '--database-dir', nargs='+',
     metavar='DIRECTORY', help='Database-friendly summary with some detail (scan directory for XML files)')
+parser.add_argument('-r', '--dir', nargs='+',
+    metavar='XMLFILE', help='HTML diary pages all in one (without pictures)')
 parser.add_argument('-1', '--single',
     metavar='XMLFILE', help='HTML diary page')
 args = vars(parser.parse_args())
@@ -321,12 +351,13 @@ if len(sys.argv) == 1:
     parser.print_usage()
     sys.exit(2)
 
-if args['landing']:
+if args['landing'] or args['dir']:
     title = args['title']
     if not title:
-        title = 'Swimming'
+        title = 'Lifting'
         print('warning: --title not specifed, will use default "%s"' % title,
             file=sys.stderr)
+if args['landing']:
     landing(args['landing'], args['title'],
         lambda s: '%s.html' % s['filename'].replace('.xml', ''))
 elif args['summary']:
@@ -341,7 +372,9 @@ elif args['single']:
     if args['picture']:
         pictures = {kind: jpgfile for [jpgfile, kind] in args['picture']}
     single(args['single'], pictures)
+elif args['dir']:
+    dir(args['dir'], args['title'])
 else:
     print('specify mode:', file=sys.stderr)
-    print('--landing --summary --database[-dir] --single', file=sys.stderr)
+    print('--landing --summary --database[-dir] --single --dir', file=sys.stderr)
     sys.exit(2)
