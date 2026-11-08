@@ -93,10 +93,17 @@ def add_or_get_swimset(sets):
         return s
     else:
         return insert_el(sets, 'set')
-if title.count(' ') < 1:
-    raise NameError('note title not at least 2 words for venue and kind: %s' % title)
-venue.set('name', title.split(' ')[0])
-meta.set('kind', title[title.index(' ') + 1:])
+def split_venue_name_and_session_kind(title):
+    if title.count(' ') < 1:
+        raise NameError('note title not at least 2 words for venue and kind: %s' % title)
+    if title.startswith('Česká Lípa'): # heuristic (2 words)
+        second_space = title.find(' ', title.find(' ') + 1)
+        return title[:second_space], title[second_space + 1:]
+    else:
+        return title.split(' ')[0], title[title.index(' ') + 1:]
+venue_name, session_kind = split_venue_name_and_session_kind(title)
+venue.set('name', venue_name)
+meta.set('kind', session_kind)
 for label, lines in outlines.items():
     if label == 'time':
         # string replace to turn '7.30am' into '7:30am' familiar to dateutil
